@@ -1,0 +1,118 @@
+---
+title: "Towards a performance model for early cognitive development"
+author: "Michael C. Frank"
+output: html_document
+bibliography: sop.bib
+---
+
+```{r, include=FALSE, echo=FALSE, warning=FALSE}
+# Code preliminaries.
+library(dplyr)
+library(ggplot2)
+theme_set(theme_bw())
+knitr::opts_chunk$set(echo=FALSE, cache=TRUE, warning=FALSE)
+```
+
+Human beings begin their lives as helpless infants yet quickly become children who are able to perceive, act, and communicate. External, physical differences account for only a small amount of this fundamental change: Without a mature mind, a mature body cannot navigate the world. Thus, the fundamental question of developmental psychology is how these external behavioral differences are enabled by internal processes of developmental change. 
+
+Identifying these processes is a fundamental and outstanding challenge, for two reasons. First, because they are emergent features of our mental processes and how they interact with external stimuli, they are by definition unobservable. Our best attempts can yield hypothesized computational descriptions [@elman1998; @tenenbaum2011]. Second, they operate over developmental timescales. While such timescales can be observed longitudinally, such observations are necessarily correlational and hence confounded with other factors. In contrast, controlled, laboratory interventions that allow strong causal inference are typically limited to the timescale of minutes or hours rather than days, weeks, or months. 
+
+Accounts of development differ in their emphasis on the role of innate content and learning mechanisms. While some accounts of development rely on [@carey2009; @spelke2007]
+Such debates have typically been unsatisfying because they rely on the existence of 
+
+
+In this paper, our aim is to begin to address this challenge. We develop a simple quantitative model of performance limitations for complex, multi-part operations. In a nutshell, the model predicts expected performance for a multi-part operation on the basis of the speed and accuracy of the individual parts. In this sense, it is a highly-abstracted version of previous cognitive architecture models like ACT-R [@anderson1996]. 
+
+Though fitting complex models to developmental data is often challenging due to problems of measurement, we use techniques such as meta-analysis to attempt to overcome these limitations. Throughout, we use data from a range of sources to estimate the parameters of this model and show how it can provide insights into otherwise puzzling patterns of developmental change in a number of different domains including word learning, social cognition, and object knowledge. 
+
+The goal of this model is to provide a baseline, _null hypothesis_ for development.  It is clear that _at least_ the speed and accuracy of any given cognitive operation change across developmental time. But the consequences of these changes are far from obvious. 
+
+> Strong continuity hypothesis: Developmental changes come about as a result of changes in speed and accuracy of psychological processes, rather than in their representational content.
+
+Model
+-----
+
+Our model assumes that nearly every mental process---especially those involved in learning---requires multiple operations. These operations are chained in a sequence. Some examples of such sequences:
+
++ _Word learning_: Follow an agent's gaze to a target, then associate a word that the agent speaks with the identity of the target.
++ _Imitation_: Store an agent's action, then carry out the same action. 
++ _Object play_: Search for partially occluded target object, move aside occluder, grasp target object.
+
+As is immediately clear, complex actions are describable at many different grain sizes. We view this as a strength rather than a weaknesses of our framework, which can be applied to units at any grain size. 
+
+Consider a set of interacting mental processes. We assume that each of these has a Bernoulli success probability $s_p$. With probability $1-s_p$, they fail. For simplicity, we assume chains where all of the operations have the same probability $s$, though of course in the presence of the appropriate data, we could estimate the failability of individual operations. 
+
+We assume that one failure in a series of operations leads to the failure of the chain $c$. Thus, the probability of a sequence of failures is exponential such that $P_{success} = s^{n}$, where $n$ is the length of the chain. 
+
+```{r}
+ns <- 1:10
+ss <- seq(.3,.9,.1)
+
+expand.grid(n = ns, s = ss) %>%
+  mutate(p = s^n) %>%
+  ggplot(aes(x = n, y = p, col = factor(s))) + 
+  geom_line() + 
+  ylim(c(0,1)) + 
+  xlim(c(1, 10)) + 
+  ggtitle("Cumulative probability of success by chain length")
+```
+
+We also associate a time to completion with each operation. We assume that these are "reaction times" and are sampled from a log-normal distribution:
+
+$$RT(s_p) \sim exp(N(\mu,\sigma))$$
+
+The arithmetic mean of a lognormal is $e^{\mu + \sigma^2/2}$. Unfortunately, there is not a known parametric form for the sum of multiple lognormals. (Fenson, 1960 et seq have introduced a varity of approximations). Here, we pursue a simulation approach. 
+
+```{r}
+mu = 0
+sigma = 1
+nsims = 10000
+
+expand.grid(n = ns) %>%
+  group_by(n) %>%
+  do(data.frame(rt = rlnorm(nsims, mu, sigma)*.$n)) %>%
+  ggplot(aes(x = rt, col = factor(n))) + 
+  geom_density() + 
+  xlim(c(0,20)) + 
+  ggtitle("Reaction time distribution for chains of different lengths") 
+```
+
+Imagine a time-sensitive operation, e.g. the word learning case above. We consider a temporal threshold $\theta$ such that if the two operations are not completed within this threhold, then there is no possibility of learning. We can now compute the probability that a chain is successful within the appropriate time period for learning. 
+
+```{r}
+thetas <- seq(1, 5, .5)
+ns <- 1:5
+nsims <- 1000
+
+sims <- expand.grid(n = ns, 
+            s = ss, 
+            theta = thetas) %>%
+  group_by(n, s, theta) %>%
+  do(data.frame(rt = rlnorm(nsims)*.$n, 
+                success = rbinom(nsims, .$n, .$s) == .$n)) %>%
+  mutate(relevant = rt < theta & success) %>%
+  group_by(n, s, theta) %>%
+  summarise(p = mean(relevant))
+
+ggplot(sims, aes(x = n, y = p, col = factor(s))) + 
+  geom_line() + 
+  facet_wrap(~theta) +
+  geom_hline(yintercept = .5, lty = 2) + 
+  ggtitle("Probability of successsfully executing a chain within a temporal threshold")
+```
+
+These simulations show a striking result: even assuming the median time to execution for a single step is 1s, successful and timely execution of multi-step sequences is very unlikely within reasonable time-frames. Even with $\theta = 5s$, chains of length 3 and 4 were only successful half the time if each separate sub-action was extremely likely to succeed. At shorter values of $\theta$, virtually no chains of length 3 were successful.
+
+Of course, to be meaningful, these simulations require estimates for the values of $\mu$, $\sigma$, $n$, $s$, and $\theta$. We turn next to some attempts to estimate thsse quantities. 
+
+Fitting our model to data
+-------------------------
+
+
+Relationship to other models
+----------------------------
+
++ ACT-R
+
+References
+----------
