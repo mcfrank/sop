@@ -1,5 +1,5 @@
 ---
-title: "Towards a performance model for early cognitive development"
+title: "A performance model for early cognitive development"
 author: "Michael C. Frank"
 output: html_document
 bibliography: sop.bib
@@ -29,8 +29,7 @@ The goal of this model is to provide a baseline, _null hypothesis_ for developme
 
 > Strong continuity hypothesis: Developmental changes come about as a result of changes in speed and accuracy of psychological processes, rather than in their representational content.
 
-Model
------
+## Model
 
 Our model assumes that nearly every mental process---especially those involved in learning---requires multiple operations. These operations are chained in a sequence. Some examples of such sequences:
 
@@ -39,6 +38,10 @@ Our model assumes that nearly every mental process---especially those involved i
 + _Object play_: Search for partially occluded target object, move aside occluder, grasp target object.
 
 As is immediately clear, complex actions are describable at many different grain sizes. We view this as a strength rather than a weaknesses of our framework, which can be applied to units at any grain size. 
+
+In this section, we first describe the formal details of the model and then turn to how development should be described. 
+
+### Formal details
 
 Consider a set of interacting mental processes. We assume that each of these has a Bernoulli success probability $s_p$. With probability $1-s_p$, they fail. For simplicity, we assume chains where all of the operations have the same probability $s$, though of course in the presence of the appropriate data, we could estimate the failability of individual operations. 
 
@@ -61,7 +64,7 @@ We also associate a time to completion with each operation. We assume that these
 
 $$RT(s_p) \sim exp(N(\mu,\sigma))$$
 
-The arithmetic mean of a lognormal is $e^{\mu + \sigma^2/2}$. Unfortunately, there is not a known parametric form for the sum of multiple lognormals. (Fenson, 1960 et seq have introduced a varity of approximations). Here, we pursue a simulation approach. 
+The arithmetic mean of a lognormal is $e^{\mu + \sigma^2/2}$. Unfortunately, there is not a known parametric form for the sum of multiple lognormals. [@fenton1960] et seq have introduced a varity of approximations for these sums, but here we pursue a simulation approach instead. 
 
 ```{r}
 mu = 0
@@ -103,16 +106,209 @@ ggplot(sims, aes(x = n, y = p, col = factor(s))) +
 
 These simulations show a striking result: even assuming the median time to execution for a single step is 1s, successful and timely execution of multi-step sequences is very unlikely within reasonable time-frames. Even with $\theta = 5s$, chains of length 3 and 4 were only successful half the time if each separate sub-action was extremely likely to succeed. At shorter values of $\theta$, virtually no chains of length 3 were successful.
 
-Of course, to be meaningful, these simulations require estimates for the values of $\mu$, $\sigma$, $n$, $s$, and $\theta$. We turn next to some attempts to estimate thsse quantities. 
+Of course, to be meaningful, these simulations require estimates for the values of $\mu$, $\sigma$, $n$, $s$, and $\theta$. The remainder of the paper attempts to provide a framework for reasoning about and estimating these numbers.
 
-Fitting our model to data
--------------------------
+### Development within this model
+
+The two posited capacities in our model are speed and accuracy. It seems clear that, for an individual cognitive operation or set of operations, both of these should change dramatically across development. How does developmental change look for these abilities? 
+
+We first consider the development of processing speed. Pioneering work by Kail [see e.g., @kail1991] describes the developmental trajectory of reaction times for individual tasks. He notes that empirically, the slope of these reaction times follows an exponential, such that
+
+$$Y = a + b e^{-ci}$$
+
+Where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. 
+
+We replot the slowing function from @kail1991:
+
+```{r fig.width=4, fig.height=3}
+a <- 1
+b <- 5.16
+c <- 0.21
+
+xs <- seq(4,20,.1)
+d <- data.frame(x = xs,
+                y = a + b * exp(-c * xs))
+qplot(x, y, geom=c("line"), 
+      data=d) + 
+  geom_hline(aes(yintercept=1), lty=2) + 
+  xlab("Age (years)") + 
+  ylab("Slope (sec)") + 
+  ylim(c(0,6)) + 
+  xlim(c(4,20)) + 
+  ggtitle("Trajectory of RT multipliers (Kail, 1991)")
+
+```
+
+Consider when this model is projected into infancy:
+
+```{r fig.width=4, fig.height=3}
+xs <- seq(0,20,.1)
+d <- data.frame(x = xs,
+                y = a + b * exp(-c * xs))
+qplot(x, y, geom=c("line"), 
+      data=d) + 
+  geom_hline(aes(yintercept=1), lty=2) + 
+  xlab("Age (years)") + 
+  ylab("Slope (sec)") + 
+  ylim(c(0,6)) + 
+  xlim(c(0,20)) + 
+  ggtitle("Trajectory of RT multipliers (infancy)")
+```
+
+This is a model of RT multipliers. By hypothesis, these multipliers should apply to individual operations or to chains of operations, since times are additive; if the multiplier is constant then it can be factored out. 
+
+How should we consider the probability of success on a single operation changing across time? For now let's consider this to be a logistic function, constrained to be 0 at infancy. 
+
+```{r fig.width=4, fig.height=3}
+inv.logit <- boot::inv.logit # get inv.logit from boot library
+
+a <- -2
+b <- .3
+xs <- seq(0,20,.1)
+
+d <- data.frame(x = xs,
+                y = inv.logit(a + b * xs))
+qplot(x, y, geom=c("line"), 
+      data=d) + 
+  xlab("Age (years)") + 
+  ylab("Accuracy") + 
+  ylim(c(0,1)) + 
+  xlim(c(0,20)) + 
+  ggtitle("Accuracy function")
+```
+
+So now let's generalize these functions so that we can look at their joint effects on performance.
 
 
-Relationship to other models
-----------------------------
+```{r}
+inv.logit <- boot::inv.logit # get inv.logit from boot library
 
-+ ACT-R
+accuracy <- function(x, a = -2, b = .3) {
+  inv.logit(a + b * x)
+}
+  
+rt.multiplier <- function (x, a = 1, b = 5.16, c = .21) {
+  a + b * exp(-c * x)
+}
 
-References
-----------
+thetas <- seq(1, 5, .5)
+ns <- 1:5
+nsims <- 1000
+ages <- seq(0, 21, .5)
+
+sims <- expand.grid(n = ns, 
+            age = ages,
+            theta = thetas) %>%
+  group_by(n, age, theta) %>%
+  do(data.frame(rt = rlnorm(nsims, meanlog = rt.multiplier(.$age - 1))*.$n, 
+                success = rbinom(nsims, .$n, accuracy(.$age)) == .$n)) %>%
+  mutate(relevant = rt < theta & success) %>%
+  group_by(n, age, theta) %>%
+  summarise(p = mean(relevant))
+
+ggplot(sims, aes(x = age, y = p, col = factor(n))) + 
+  geom_line() + 
+  facet_wrap(~theta) +
+  geom_hline(yintercept = .5, lty = 2) + 
+  ggtitle("Probability of successsfully executing a chain within a temporal threshold")
+```
+
+So this is nice, we get a joint yoking of speed and accuracy to age, with the ability to make generalization about the probability of success in chains of length $n$ within a temporal threshold. 
+
+To review: we now have a theoretical model that can make predictions about developmental changes in the speed and accuracy of executing chains of cognitive operations. The trouble is that to constrain these predictions, we require quite a bit of external information about changes in RT and accuracy. 
+
+## Case Study 1: Early Word Learning
+
+Let's try applying this framework to early social word learning. One of the big puzzles of early language learning is *why* children begin to show evidence of language learning at the approximate developmental time they do, and not earlier or later [@tomasello1999]. Our framework provides a simple alternative: children may be trying to use language from very early, but the basic cognitive components may be too slow and too challenging to allow for consistent use (and consistent measurement by psychologists) until around the 1st birthday. The recent literature on early word learning gives some support for this contention, as more careful measurement has revealed some aspects of both receptive and productive language prior to the first birthday [@bergelson2012, @schneider2015].
+
+We focus here on learning a word that is presented ostensively via a social cue like gaze or pointing, which we refer to as "social word learning." For simplicity, we decompose the task of social word learning into two abilities: 1) gaze following, and 2) word recognition. This task analysis is clearly incomplete or incorrect - for example, pointing is not the same as gaze following, and recognition is not the same as learning and retention. But it nevertheless captures some aspects of the task - following a socialcue to a distal target and processing some language associated with that target. And it has the major benefit for our purposes of providing data on development, since each of these tasks is well-studied.
+
+Let's begin by attempting to estimate developmental changes in the speed of processing a word. Of course there are many factors involved, including the frequency and general familiarity of the word. But the literature on infants' early language processing generally attempts to select simple, easy words that should be accessible to almost all children, so we can use this literature to get a rough-and-ready estimate of declines in reaction time across ages. 
+
+```{r}
+d <- read.csv("~/Projects/sop/data/data.csv")
+
+d.kid <- d %>% 
+  filter(age < 5) %>%
+  mutate(weight = 1/n)
+d.adult <- d %>% 
+  filter(age > 20) %>% 
+  summarise(rt = mean(rt))
+
+ggplot(d.kid, aes(x = age, y = rt)) + 
+  geom_point(aes(size = n, col = study), 
+             position=position_dodge(width=.05)) + 
+  geom_linerange(aes(ymin = rt - cih, 
+                     ymax = rt + cil, 
+                     col = study), 
+                 position=position_dodge(width=.05)) +
+  geom_smooth(aes(weight = weight), 
+              method="lm", formula=y ~ log(x), 
+              col="black", lty=3) + 
+  geom_hline(aes(yintercept=d.adult$rt), lty=2) +  
+  ylim(c(0,2)) + 
+  xlim(c(0,5)) + 
+  xlab("Age (years)") + 
+  ylab("Reaction Time (s)")
+```
+
+Now fit a Kail curve to these data. Note that this is a simpler analysis - we're not fitting multipliers on the slope of a mental-rotation function, we're just fitting multipliers on the actual adult RT. The Kail curve looks almost identical to the log curve we fit to the kid data - although this is partially just that they are both exponential function fits, the asymptote didn't have to be the same (e.g., didn't have to be the adult RT). 
+
+```{r}
+adult.rt <- d.adult$rt
+
+fn <- function(x, a) {
+  a = .55
+  b = x[1]
+  c = x[2]
+  df <- d.kid
+  df$pred <- a + b * exp(-c * df$age)
+  err <- mean((df$rt - df$pred)^2)
+  return(err)
+}
+
+opt <- optim(c(1,1.5), fn, adult.rt)
+
+d.kid$pred <- a + opt$par[1] * exp(-opt$par[2] * d.kid$age)
+
+xs <- seq(0,5,.1)
+d.pred <- data.frame(x = xs,
+                     y = a + opt$par[1] * exp(-opt$par[2] * xs))
+
+ggplot(d.kid, aes(x = age, y = rt)) + 
+  geom_point(aes(size = n, col = study), 
+             position=position_dodge(width=.05)) + 
+  geom_linerange(aes(ymin = rt - cih, 
+                     ymax = rt + cil, 
+                     col = study), 
+                 position=position_dodge(width=.05)) +
+  geom_hline(aes(yintercept=adult.rt), lty=2) +  
+  geom_line(data=d.pred, aes(x = x, y = y), col="red", lty=3) +
+  geom_smooth(aes(weight = weight), 
+              method="lm", formula=y ~ log(x), 
+              col="black", lty=3) + 
+  ylim(c(0,2)) + 
+  xlim(c(0,5)) + 
+  xlab("Age (years)") + 
+  ylab("Reaction Time (s)")
+```
+
+
+## Case Study 2: Object Knowledge
+
+
+
+## Case Study 3: Action Anticipation
+
+
+## Conclusions
+
++ Relationship to other models
+
++ Limitations
+
++ Relationship to neural development
+
++ Relationship to _g_ and other measures of intelligence
+
+## References
