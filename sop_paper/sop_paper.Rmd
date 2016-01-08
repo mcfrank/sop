@@ -1,0 +1,373 @@
+---
+title: "A performance model for early cognitive development"
+output: 
+    kmr::cogsci_paper:
+        includes: 
+            in_header: 
+                author-information.tex
+    
+bibliography: sop.bib
+csl: apa6.csl
+document-params: "10pt, letterpaper"
+bib-tex: "sop.bib"
+    
+abstract: 
+     "The abstract should be one paragraph, indented 1/8 inch on both sides,
+in 9 point font with single spacing. The heading Abstract should
+be 10 point, bold, centered, with one line space below it. This
+one-paragraph abstract section is required only for standard spoken
+papers and standard posters (i.e., those presentations that will be
+represented by six page papers in the Proceedings)."
+    
+keywords:
+    "Add your choice of indexing terms or keywords; kindly use a semi-colon; between each term."
+---
+
+```{r global_options, include=FALSE}
+rm(list=ls())
+knitr::opts_chunk$set(fig.width=3.5, fig.height=3, fig.crop = FALSE, 
+                      fig.pos = "ht", fig.path='figs/',
+                      echo=FALSE, warning=FALSE, cache=TRUE, 
+                      message=FALSE, sanitize=TRUE)
+```
+
+```{r, libraries}
+# library(png)
+# library(grid)
+# library(knitr)
+library(ggplot2)
+# library(xtable)
+library(dplyr)
+library(langcog)
+library(directlabels)
+theme_set(theme_bw())
+```
+
+# Introduction
+
+Human beings begin their lives as helpless infants yet quickly become children who are able to perceive, act, and communicate. External, physical differences account for only a small amount of this fundamental change: Without a mature mind, a mature body cannot navigate the world. Thus, the fundamental question of developmental psychology is how external behavioral differences come about via internal processes of developmental change. 
+
+These processes are the focus of the current paper. What causes developmental changes over timescales of weeks, months, or years? While such timescales can be observed longitudinally, such studies are almost always correlational and hence confounded with other factors. In contrast, controlled, laboratory interventions that allow strong causal inference are typically limited to the timescale of minutes, hours, or at best a matter of weeks [@smith2002]. 
+
+...
+
+My goal in this paper is to describe a first stab at a simple performance model for early cognitive development, one that assumes that children's observed behavior is a probabilistic reflection of their knowledge and intentions to act. I'll first describe a simple model of this type. I'll then show how this kind of model might predict striking developmental changes in behavior in the absence of any change in representation. I'll end by trying to apply this model to the issue of early word learning and whether any representational change underlies the salient emergence of children's language comprehension abilities after the first birthday. 
+
+# Model
+
+The basic assumptions of our performance model are familiar from many other process models [@anderson1996], namely that every cognitive operation has a processing time and a probability of failure. Each complex cognitive operation is decomposable into a chain of simpler operations, any one of which can fail. And if a single link in the chain fails, then the overall operation fails as well. Thus, the probability of failure is the product of the individual failures. Similarly for timing, the total processing time for a chain of operations is the sum of the processing times for the parts. 
+
+As is immediately clear, complex actions are describable at many different grain sizes. This is a strength rather than a weaknesses of the basic framework, which can be applied to units at any grain size. \footnote{[@smith2013] describe a similar analysis of reading times for words where they make clear that ..}
+
+...
+
+## Static success probabilities
+
+Consider a set of interacting mental processes. We assume that each of these has a Bernoulli success probability $s_p$, implying that they each fail with probability $1-s_p$, they fail. For simplicity, in this analysis, we assume chains where all of the operations have the same probability $s$, though with the appropriate data, we could estimate the failability of individual operations. We further assume that one failure in a series of operations leads to the failure of the chain $c$. Thus, the probability of a sequence of failures is exponential such that $P_{success} = s^{n}$, where $n$ is the length of the chain. 
+
+We also associate a time to completion with each operation. We assume that these are "reaction times" and are sampled from a log-normal distribution:
+
+$$RT(s_p) \sim exp(N(\mu,\sigma))$$
+
+The arithmetic mean of a lognormal is $e^{\mu + \sigma^2/2}$. Unfortunately, there is not a known parametric form for the sum of multiple lognormals. A variety of analytic approximations for these sums exist [@fenton1960], but they have some limitatios. I will use a numerical simulation approach here for simplicity. 
+
+Imagine a time-sensitive operation with a temporal threshold $\theta$ such that if the operations are not completed within this threhold, then there is no possibility of learning. Via simulation, we can approximate the probability that a chain is successful within the appropriate time period for learning. For siplicity, we assume a standard lognormal with $\mu = 0$, $\sigma = 1$.
+
+```{r}
+thetas <- seq(1, 6)
+ns <- 1:5
+ss <- seq(.3,.9,.1)
+nsims <- 1000
+
+sims <- expand.grid(n = ns, 
+            s = ss, 
+            theta = thetas) %>%
+  group_by(n, s, theta) %>%
+  do(data.frame(rt = rlnorm(nsims, meanlog = 0, sdlog = 1)*.$n, 
+                success = rbinom(nsims, .$n, .$s) == .$n)) %>%
+  mutate(relevant = rt < theta & success) %>%
+  group_by(n, s, theta) %>%
+  summarise(p = mean(relevant)) %>%
+  ungroup() %>%
+  mutate(s = factor(s))
+
+ggplot(sims, aes(x = n, y = p, col = s)) + 
+  geom_line() + 
+  facet_wrap(~theta)
+  # geom_hline(yintercept = .5, lty = 2) 
+```
+Figure 1. Probability p of successsfully executing a chain of operations with $n$ steps, plotted by the probability of success $s$. Facets show diferent temporal thresholds $\theta$
+
+The simulations in Figure 1 show a simple result: long chains of operations are unlikely to succeed unless individual operations are very fast and very accurate. Even assuming the median time to execution for a single step is 1s ($e^{\mu}=1$), successful and timely execution of multi-step sequences is very unlikely within a reasonable time frame. For example, with a cutoff of $\theta = 6s$, chains of length 3 were only successful half the time if each separate sub-action was extremely likely to succeed ($s > .9$). At shorter values of $\theta$, virtually no chains of length 3 were successful.
+
+Of course, to be meaningful, these simulations require estimates for the values of $\mu$, $\sigma$, $n$, $s$, and $\theta$.
+
+## Development within the model
+
+The two posited capacities in our model are speed and accuracy. It seems clear that, for an individual cognitive operation or set of operations, both of these should change dramatically across development. How does developmental change look for these abilities? 
+
+We first consider the development of processing speed. Pioneering work by Kail [see e.g., @kail1991] describes the developmental trajectory of reaction times for individual tasks. He notes that empirically, the slope of these reaction times follows an exponential, such that
+
+$$Y = a + b e^{-ci}$$
+
+Where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. To illustrate this model, we replot the slowing function from @kail1991 in Figure 2, but extend the function into infancy.
+
+```{r}
+a <- 1
+b <- 5.16
+c <- 0.21
+
+xs <- seq(0,20,.1)
+d <- data.frame(x = xs,
+                y = a + b * exp(-c * xs))
+qplot(x, y, geom=c("line"), 
+      data=d) + 
+  geom_hline(aes(yintercept=1), lty=2) + 
+  xlab("Age (years)") + 
+  ylab("Slope (sec)") + 
+  ylim(c(0,6)) + 
+  xlim(c(0,20)) 
+```
+
+The [@kail1991] model is a model of RT multipliers. Since operations are additive, these multipliers should apply to individual operations or to chains of operations equivalently: if the multiplier is constant then it can be factored out. 
+
+For simplicity, we consider the probability of success on a single operation changing across time as a logistic. This function is constrained to be 0 at infancy (but see e.g., [@hidaka2013] for a more sophisticated approach to learning curves). 
+
+## Development of speed and accuracy
+
+So now let's generalize these functions so that we can look at their joint effects on performance.
+
+```{r}
+inv.logit <- boot::inv.logit # get inv.logit from boot library
+
+accuracy <- function(x, a = -2, b = .3) {
+  inv.logit(a + b * x)
+}
+  
+rt.multiplier <- function (x, a = 1, b = 5.16, c = .21) {
+  a + b * exp(-c * x)
+}
+
+thetas <- 1:6
+ns <- 1:5
+nsims <- 1000
+ages <- seq(0, 21, .5)
+
+sims <- expand.grid(n = ns, 
+            age = ages,
+            theta = thetas) %>%
+  group_by(n, age, theta) %>%
+  do(data.frame(rt = rlnorm(nsims, meanlog = rt.multiplier(.$age - 1))*.$n, 
+                success = rbinom(nsims, .$n, accuracy(.$age)) == .$n)) %>%
+  mutate(relevant = rt < theta & success) %>%
+  group_by(n, age, theta) %>%
+  summarise(p = mean(relevant)) %>%
+  mutate(theta = factor(as.character(paste0("theta=",as.character(theta)))))
+  
+```
+
+```{r, fig.env="figure*", fig.align="center"}
+ggplot(sims, aes(x = age, y = p, col = factor(n))) + 
+  geom_line() + 
+  facet_wrap(~theta) +
+  # geom_hline(yintercept = .5, lty = 2) + 
+  geom_dl(aes(label = factor(n)), method = "last.qp") + 
+  scale_colour_solarized(guide=FALSE) + 
+  ylab("Probability of successful chain") + 
+  xlab("Age (months)") + 
+  ylim(c(0,1))
+```
+
+Figure 3. Probability of success for one set of developmental parameters. Different colored lines indicate chains of differing lengths, panels slow 
+
+Figure 3 shows one possible model of success.
+
+So this is nice, we get a joint yoking of speed and accuracy to age, with the ability to make generalization about the probability of success in chains of length $n$ within a temporal threshold. 
+
+To review: we now have a theoretical model that can make predictions about developmental changes in the speed and accuracy of executing chains of cognitive operations. The trouble is that to constrain these predictions, we require quite a bit of external information about changes in RT and accuracy. 
+
+# Case Study: Early Word Learning
+
+Let's try applying this framework to early social word learning. One of the big puzzles of early language learning is *why* children begin to show evidence of language learning at the approximate developmental time they do, and not earlier or later [@tomasello1999]. Our framework provides a simple alternative: children may be trying to use language from very early, but the basic cognitive components may be too slow and too challenging to allow for consistent use (and consistent measurement by psychologists) until around the 1st birthday. The recent literature on early word learning gives some support for this contention, as more careful measurement has revealed some aspects of both receptive and productive language prior to the first birthday [@bergelson2012, @schneider2015].
+
+We focus here on learning a word that is presented ostensively via a social cue like gaze or pointing, which we refer to as "social word learning." For simplicity, we decompose the task of social word learning into two abilities: 1) gaze following, and 2) word recognition. This task analysis is clearly incomplete or incorrect - for example, pointing is not the same as gaze following, and recognition is not the same as learning and retention. But it nevertheless captures some aspects of the task - following a socialcue to a distal target and processing some language associated with that target. And it has the major benefit for our purposes of providing data on development, since each of these tasks is well-studied.
+
+## Word processing
+
+Let's begin by attempting to estimate developmental changes in the speed of processing a word. Of course there are many factors involved, including the frequency and general familiarity of the word. But the literature on infants' early language processing generally attempts to select simple, easy words that should be accessible to almost all children, so we can use this literature to get a rough-and-ready estimate of declines in reaction time across ages. 
+
+```{r}
+d <- read.csv("../data/data.csv")
+
+d.kid <- d %>% 
+  filter(age < 5) %>%
+  mutate(weight = 1/n)
+d.adult <- d %>% 
+  filter(age > 20) %>% 
+  summarise(rt = mean(rt))
+
+ggplot(d.kid, aes(x = age, y = rt)) + 
+  geom_point(aes(size = n, col = study), 
+             position=position_dodge(width=.05)) + 
+  geom_linerange(aes(ymin = rt - cih, 
+                     ymax = rt + cil, 
+                     col = study), 
+                 position=position_dodge(width=.05)) +
+  geom_smooth(aes(weight = weight), 
+              method="lm", formula=y ~ log(x), 
+              col="black", lty=3) + 
+  geom_hline(aes(yintercept=d.adult$rt), lty=2) +  
+  ylim(c(0,2)) + 
+  xlim(c(0,5)) + 
+  xlab("Age (years)") + 
+  ylab("Reaction Time (s)")
+```
+
+Now fit a Kail curve to these data. Note that this is a simpler analysis - we're not fitting multipliers on the slope of a mental-rotation function, we're just fitting multipliers on the actual adult RT. The Kail curve looks almost identical to the log curve we fit to the kid data - although this is partially just that they are both exponential function fits, the asymptote didn't have to be the same (e.g., didn't have to be the adult RT). 
+
+```{r}
+adult.rt <- d.adult$rt
+a = .55
+
+fn <- function(x, a = .55) {
+  b = x[1]
+  c = x[2]
+  df <- d.kid
+  df$pred <- a + b * exp(-c * df$age)
+  err <- mean((df$rt - df$pred)^2)
+  return(err)
+}
+
+opt <- optim(c(1,1.5), fn, adult.rt)
+
+d.kid$pred <- .55 + opt$par[1] * exp(-opt$par[2] * d.kid$age)
+
+xs <- seq(0,5,.1)
+d.pred <- data.frame(x = xs,
+                     y = a + opt$par[1] * exp(-opt$par[2] * xs))
+
+ggplot(d.kid, aes(x = age, y = rt)) + 
+  geom_point(aes(size = n, col = study), 
+             position=position_dodge(width=.05)) + 
+  geom_linerange(aes(ymin = rt - cih, 
+                     ymax = rt + cil, 
+                     col = study), 
+                 position=position_dodge(width=.05)) +
+  geom_hline(aes(yintercept=adult.rt), lty=2) +  
+  geom_line(data=d.pred, aes(x = x, y = y), col="red", lty=3) +
+  geom_smooth(aes(weight = weight), 
+              method="lm", formula=y ~ log(x), 
+              col="black", lty=3) + 
+  ylim(c(0,2)) + 
+  xlim(c(0,5)) + 
+  xlab("Age (years)") + 
+  ylab("Reaction Time (s)")
+```
+
+a = `r opt$par[1]` and b = `r opt$par[2]`
+
+## Gaze following
+
+
+## Estimating the speed of reference
+
+Our next task is to extract a plausible value for $\theta$, the speed at which refential utterances must be processed  This number is quite subjective; it's not immediately clear when information would become inaccessible. Perhaps for momentary cues like referential gaze, if 
+
+```{r}
+library(readr)
+filepath <- "../data/FM/data/"
+files <- dir(path = filepath, pattern = "*.csv")
+
+fm <- data.frame()
+for (f in files) {
+  fm <- bind_rows(fm, read_csv(paste0(filepath,f)))
+}
+```
+
+As an approximation, we measure the time between utterances with referential content in child-directed speech. We use the Fernald and Morikawa corpus [@fernald1993, @frank2013], as annotated for the approximate time of each utterance by [@rohde2015]. This corpus contains `r length(unique(fm$video))` annotated videos of interactions between children and their caregivers playing with toys at home. 
+
+```{r}
+library(stringr)
+library(magrittr)
+
+fm %<>%
+  rowwise %>%
+  mutate(referential_gaze = mom.eyes %in% objects.referred)
+  
+fm %<>% 
+  group_by(video) %>%
+  mutate(dt = c(diff(time.agg.adj),0))
+
+# qplot(dt, facets = ~ referential_gaze, data = fm)
+
+means <- fm %>%
+  group_by(video, referential_gaze) %>%
+  summarise(mean = mean(dt), 
+            median = median(dt)) %>%
+  ungroup %>%
+  mutate(video = as.numeric(str_sub(video, 2, 4)))
+
+demo <- read_csv("../data/FM/fm_master_ages.csv")
+
+means %<>% left_join(demo)
+
+# ggplot(means, aes(x = age, y = median, col = referential_gaze)) + 
+#   geom_smooth(method = "lm") + 
+#   geom_jitter() +
+#   scale_colour_solarized()
+```
+
+So the mean time between utterances with referential gaze is `r mean(fm$dt[fm$referential_gaze == TRUE])` and the median is `r median(fm$dt[fm$referential_gaze == TRUE])`. Perhaps surprisingly, this isn't different for utterances that include referential gaze and those that don't: it's simply the pace of conversation. 
+
+In sum, this analysis suggests that we take $\theta \approx 2.5$ as a starting point for our out analysis.
+
+# Simulation
+
+```{r}
+thetas <- 2.5
+ns <- 2
+nsims <- 10000
+ages <- seq(0, 36, 1)
+
+sims <- expand.grid(n = ns, 
+            age = ages,
+            theta = thetas) %>%
+  group_by(n, age, theta) %>%
+  do(data.frame(rt = rlnorm(nsims, meanlog = rt.multiplier(.$age - 1,
+                                                           a = .55, 
+                                                           b = opt$par[1],
+                                                           c = opt$par[2]))*.$n, 
+                success = rbinom(nsims, .$n, accuracy(.$age, 
+                                                      a = -2, 
+                                                      b = .4)) == .$n)) %>%
+  mutate(relevant = rt < theta & success) %>%
+  group_by(n, age, theta) %>%
+  summarise(p = mean(relevant)) %>%
+  mutate(theta = factor(as.character(paste0("theta=",as.character(theta)))))
+  
+ggplot(sims, aes(x = age, y = p, col = factor(n))) + 
+  geom_line() + 
+  facet_wrap(~theta) +
+  # geom_hline(yintercept = .5, lty = 2) + 
+  geom_dl(aes(label = factor(n)), method = "last.qp") + 
+  scale_colour_solarized(guide=FALSE) + 
+  ylab("Proportion of learning instances used") + 
+  xlab("Age (months)") + 
+  ylim(c(0,1))
+```
+
+#  Discussion
+
++ Relationship to other models
+
++ Limitations
+
++ Relationship to neural development
+
++ Relationship to _g_ and other measures of intelligence
+
+# Acknowledgements
+
+Thanks to members of the Language and Cognition Lab at Stanford for helpful discussion. 
+
+# References 
