@@ -1,0 +1,245 @@
+video,utt.num,time.coder1,time.coder2,time.coder3,time.agg,time.agg.adj,utt,objects.present,objects.referred,mom.eyes,mom.hands,mom.point,kid.eyes,kid.hands
+A21,1,30,25,25,25,0,you want to do that,car truck,,car,car child,,car,car truck
+A21,2,32,30,29,29.5,4.5,what sound does a car make,car truck,car,child,car child,,truck,truck
+A21,3,36,32,33,32.5,7.5,zoom,car truck,,child,child,,truck,truck
+A21,4,39,37,36,36.5,11.5,thats a truck,car truck,truck,truck,child,,truck,truck
+A21,5,41,39,39,39,14,a truck yeah,car truck,truck,truck,child,,truck,truck
+A21,6,42,40,41,41.5,16.5,see it has teddy bears on the side huh,car truck,truck,truck,child,truck,truck,truck
+A21,7,44,42,44,44,19,zoom,car truck,,truck,child,,,truck
+A21,8,47,45,45,45,20,what color is the truck,car truck,truck,child,child,,truck,truck
+A21,9,51,48,47,47.5,22.5,green right,car truck,,truck,child,,truck,truck
+A21,10,52,51,51,51,26,and that ones red,car truck,car,car,child,,car,car truck
+A21,11,55,52,52,52,27,whats this,car truck,car,car,child,car,car,car truck
+A21,12,61,56,56,56,31,wheels right,car truck,car,child,child,,truck,car truck
+A21,13,62,61,60,61.5,36.5,wheels too yeah,car truck,truck,truck,child,truck,truck,car truck
+A21,14,63,62,63,63,38,zoom,car truck,,car,child,,car,car truck
+A21,15,70,63,66,64.5,39.5,zoom,car truck,,car,child,,,car truck
+A21,16,72,70,70,70,45,ooh does it open,car truck,car,car,child,,car,car truck
+A21,17,77,72,72,72,47,ha here mommy hold this one,car truck,truck,truck,child truck,,car,car truck
+A21,18,78,74,74,74,49,see is that door opens,car truck,car,car,child truck,car,car,car
+A21,19,79,78,79,79,54,nope,car truck,,,child truck,,truck,car truck
+A21,20,84,80,83,83.5,58.5,ha,car truck,,car,car truck,,truck,car truck
+A21,21,86,84,84,84,59,yes it does,car truck,car,car,car truck,,car,truck
+A21,22,88,86,86,86,61,yes it does,car truck,car,car,car,,car,truck
+A21,23,89,88,88,88,63,how many doors,car truck,car,car,car,,car,truck
+A21,24,92,90,89,89.5,64.5,two doors right,car truck,car,car,car,,car,truck
+A21,25,95,92,93,92.5,67.5,zoom truck,car truck,truck,car,car,,car,car truck
+A21,26,97,94,95,94.5,69.5,in here,car truck,car,car,car,,car,car truck
+A21,27,98,96,96,96,71,here you wanna,car truck,,car,car,,car,car truck
+A21,28,100,98,97,97.5,72.5,you wanna put the truck on top of the car,car truck,car truck,car,car,,car,car truck
+A21,29,105,99,100,99.5,74.5,okay,car truck,,car truck,car truck,,car truck,
+A21,30,108,104,105,104.5,79.5,yeah,car truck,,car truck,,,car truck,
+A21,31,112,106,106,106,81,uhoh what happened,car truck,,car truck,,,truck,truck
+A21,32,115,110,110,110,85,whatd you do,car truck,,car,,,car,car truck
+A21,33,120,114,114,114,89,did you did you close the door,car truck,car,child,,,car,car truck
+A21,34,127,115,115,115,90,oh,car truck,,car,,,car,car truck
+A21,35,128,125,125,125,100,in there,car truck,car,child,,,car,car
+A21,36,129,126,126,126,101,ahhh,car truck,,car,,,car,car
+A21,37,132,128,128,128,103,where does chris sit,car truck,,car,,,car,car
+A21,38,133,130,130,130,105,does chris,car truck,,car,,,car,car
+A21,39,138,132,131,131.5,106.5,does chris sit in the car,car truck,car,car,,,car,car
+A21,40,140,134,134,134,109,sit car,car truck,car,car,child,,car,car
+A21,41,141,,138,139.5,114.5,okay,car truck,,car,child,,car,car
+A21,42,142,141,139,141.5,116.5,yeah chris sits in the back seat huh,car truck,car,truck,child,,car,car truck
+A21,43,163,143,143,143,118,yeah,car truck,,car,child,,car,car truck
+A21,44,181,163,163,163,138,uhoh fall down,car truck,,truck,child,,truck,truck
+A21,45,187,180,180,180,155,can i drive on chriss leg,car truck,,car,car child,,car,truck
+A21,46,191,185,187,186,161,hum,car truck,,car,child,,car,car
+A21,47,193,189,189,189,164,what are these chris,car truck,car,car,car,car,car,car
+A21,48,195,193,192,192.5,167.5,headlights right headlights,car truck,car,car,child,,car,car
+A21,49,198,196,196,196,171,sit down,car truck,,car,child,,car,car
+A21,50,202,198,198,198,173,okay,car truck,,car,child,,car,car
+A21,51,206,201,202,201.5,176.5,uhhuh,car truck,,car,child,,car,car
+A21,52,210,206,206,206,181,yeah does the trunk open,car truck,car,car,car,,car,car
+A21,53,215,212,210,211,186,no no just  the doors,car truck,car,car,car,,car,
+A21,54,218,215,214,214.5,189.5,ha and what is that this is an english car,car truck,car,car,car,,car,
+A21,55,224,217,217,217,192,the steering wheels on the wrong side,car truck,car,car,car,,car,car
+A21,56,228,223,220,221.5,196.5,yeah,car truck,,car,,,car,car
+A21,57,231,225,223,224,199,yeah,car truck,,car,,,car,car
+A21,58,232,228,230,231,206,sit down car,car truck,car,car,,,car,car
+A21,59,238,231,231,231,206,yeah right in that seat,car truck,car,car,,,car,car
+A21,60,241,234,234,234,209,chris sits down in mommy and daddys car huh,car truck,car,child,,,car,car
+A21,61,243,238,238,238,213,yeah and you turn the blinkers on,car truck,car,child,,,car,car
+A21,62,245,242,241,241.5,216.5,yeah,car truck,,child,,,car,car
+A21,63,247,251,252,251.5,226.5,zoom,car truck,,child,,,car,car
+A21,64,267,253,253,253,228,okay,car truck,,child,,,car,car
+A21,65,270,267,267,267,242,thats the front of the truck,car truck,truck,truck,,,truck,truck
+A21,66,275,270,270,270,245,front of the truck yeah,car truck,truck,truck,,,truck,truck
+A21,67,277,273,273,273,248,no open uhuh,car truck,,truck,,,truck,truck
+A21,68,279,277,277,277,252,whats that,car truck,truck,truck,,truck,truck,truck
+A21,69,288,279,279,279,254,a bear,car truck,truck,truck,,,truck,truck
+A21,70,291,287,287,287,262,what color are the wheels,car truck,truck,truck,,truck,truck,truck
+A21,71,295,290,291,290.5,265.5,red right,car truck,,truck,child,,truck,truck
+A21,72,296,293,293,293,268,what colors this,car truck,truck,truck,child,truck,truck,truck
+A21,73,299,295,295,295,270,green right,car truck,,truck,child,,truck,truck
+A21,74,304,298,298,298,273,that ones red yeah,car truck,car,car,child,,car,car
+A21,75,306,302,301,301.5,276.5,what a smart boy,car truck,,car,child,,car,car
+A21,76,311,305,304,304.5,279.5,yeah what a smart boy you are,car truck,,car,child,,car,car
+A21,77,316,310,310,310,285,to open,car truck,,car,child,,car,car
+A21,78,320,312,312,312,287,oh ill show you,car truck,,car,car,,car,car
+A21,79,325,314,313,313.5,288.5,right here,car truck,car,car,car,,car,car
+A21,80,330,317,317,317,292,and on this side too,car truck,car,car,child,,car,car
+A21,81,335,320,320,320,295,uhhuh that will open,car truck,car,car,child,,car,car
+A21,82,340,324,324,324,299,see little finger right there,car truck,car,car,car,,car,car
+A21,83,345,328,329,328.5,303.5,there,car truck,car,car,,,car,car
+A21,84,346,329,330,329.5,304.5,see,car truck,,car,,,car,car
+A21,85,347,329,331,330,305,two doors,car truck,car,car,,,car,car
+A21,86,348,336,336,336,311,two,car truck,,car,,,car,car
+A21,87,351,340,340,340,315,okay close the door,car truck,car,car,,,car,car
+A21,88,358,347,347,347,322,you want to leave it open,car truck,car,,child,,car,car
+A21,89,365,350,350,350,325,oooh chris whats that,car truck brush box,box brush,brush,,,brush,car truck
+A21,90,366,369,369,369,344,whats in whats here,car truck brush box,box brush,box,child,box,car truck,
+A21,91,378,371,371,371,346,what are those two,car truck brush box,box brush,child,child,,box,
+A21,92,381,373,373,373,348,what is that,car truck brush box,box,child,child,,box,box
+A21,93,382,378,378,378,353,can you open that,car truck brush box,box,child,child,,,box
+A21,94,388,389,390,389.5,364.5,ha,car truck brush box,,box,child,,box,box
+A21,95,395,392,392,392,367,ha,car truck brush box,,box,child,,box,box
+A21,96,401,395,394,394.5,369.5,is there anything inside,car truck brush box,,child,child,,box,box
+A21,97,405,400,400,400,375,what happened chris what happened,car truck brush box,,child,box,,,
+A21,98,406,403,404,403.5,378.5,huh,car truck brush box,,child,child,,,
+A21,99,408,406,406,406,381,can we whats this,car truck brush box,brush,brush,child,brush,,
+A21,100,411,408,407,407.5,382.5,what color is that,car truck brush box,brush,brush,child,,brush,
+A21,101,412,409,409,409,384,what color is,car truck brush box,,brush,child,,brush,
+A21,102,413,411,410,410.5,385.5,blue,car truck brush box,,brush,child,,brush,
+A21,103,414,412,412,412,387,what is that,car truck brush box,brush,brush,child,,brush,
+A21,104,421,416,416,416,391,blue,car truck brush box,,brush,child,,brush,
+A21,105,423,419,419,419,394,what is this,car truck brush box,brush,brush,child brush,,,box
+A21,106,425,422,423,422.5,397.5,brush,car truck brush box,brush,brush,child brush,,brush,
+A21,107,432,426,424,425,400,wow can you put the brush in the box,car truck brush box,brush box,brush,child,,brush,brush
+A21,108,435,432,432,432,407,what do you do with the brush,car truck brush box,brush,brush,child,,,
+A21,109,440,434,436,435,410,in here,car truck brush box,box,child,child,,,
+A21,110,442,437,437,437,412,oh,car truck brush box,box,,child,,,
+A21,111,449,440,440,440,415,microphone,car truck brush box,box,,child,,,
+A21,112,453,448,448,448,423,you dont like these two huh,car truck brush box,box brush,brush,brush,,truck,
+A21,113,457,452,452,452,427,youd rather play with the trucks,car truck brush box,car truck,child,brush,,truck,
+A21,114,468,456,456,456,431,okay,car truck brush box,,car,,,car,truck
+A21,115,469,466,466,466,441,yay,car truck brush box,,car,,,car,car brush
+A21,116,474,469,469,469,444,you wanna brush mommys hair,car truck brush box,,child,,,brush,brush
+A21,117,475,472,472,472,447,thank you,car truck brush box,,,,,mom,brush
+A21,118,484,474,473,473.5,448.5,thank you,car truck brush box,,brush,,,brush,brush
+A21,119,490,484,483,483.5,458.5,how bout if we put the box on chris head,car truck brush box,box,child,box,,car,car
+A21,120,492,488,490,491,466,two boxes,car truck brush box,box,box,,,box,box
+A21,121,513,492,491,491.5,466.5,yeah a top and a bottom,car truck brush box,box,box,,,box,box
+A21,122,516,512,511,511.5,486.5,on top yeah good boy,car truck,,car,child,,car,car
+A21,123,518,514,516,517,492,zoom,car truck,,car,child,,car,truck
+A21,124,522,518,517,517.5,492.5,uhoh its gonna fall,car truck,car,car,child,,car,truck
+A21,125,528,522,521,521.5,496.5,maybe not,car truck,,car,truck,,car,
+A21,126,545,524,523,523.5,498.5,do do do do do,car truck,,car,truck,,car,
+A21,127,550,545,545,545,520,on top,car truck,,car,,,car,car
+A21,128,553,551,551,551,526,put the car on top of the truck,car truck,car truck,car,,,car,car
+A21,129,567,553,553,553,528,okay,car truck,,car,,,car,car
+A21,130,610,555,555,555,530,zoom,car truck,,car,,,car,
+A21,131,611,604,603,603.5,578.5,you sit down,car truck brush box,,child,,,,car truck
+A21,132,613,604,604,604,579,okay,car truck,,child,,,,car truck
+A21,133,618,608,606,607,582,here ill move that,car truck brush box,,,,,,car truck
+A21,134,619,609,607,608,583,there you go,car truck brush box,,child,,,,car truck
+A21,135,620,618,617,617.5,592.5,is she taking your picture,car truck brush box,,child,child,,truck,car
+A21,136,621,620,619,620.5,595.5,yeah okay,car truck brush box,,child,,,car,truck
+A21,137,626,622,621,621.5,596.5,maybe we can put the box on top,car truck brush box,box,box,box,,box,truck
+A21,138,627,626,626,626,601,ha,car truck brush box,,box,box,,box,
+A21,139,629,627,627,627,602,wow,car truck brush box,,box,box,,box,
+A21,140,630,629,629,629,604,ooops,car truck brush box,,box,,,box,box
+A21,141,642,630,630,630,605,no,car truck brush box,,box,,,box,box
+A21,142,647,642,642,642,617,are you brushing your socks,car truck brush box,,brush,,,brush,brush
+A21,143,648,646,646,646,621,hit,car truck brush box,,brush,,,car,brush
+A21,144,656,647,647,647,622,no hit,car truck brush box,,brush,,,car,car brush
+A21,145,658,655,655,655,630,oh good one,car truck brush box,,car,,,car,car
+A21,146,665,658,657,657.5,632.5,yeah,car truck brush box,,car,box,,car,car
+A21,147,672,660,667,669.5,644.5,mommy put it on her head,car truck brush box,box,child,box,,mom,
+A21,148,677,672,674,673,648,got you,car truck brush box,,box,box,,,
+A21,149,680,676,676,676,651,should we do it again,car truck brush box,,child,box,,mom,
+A21,150,682,677,678,677.5,652.5,ha,car truck brush box,,child,,,mom,
+A21,151,685,680,679,679.5,654.5,boo,car truck brush box,,child,,,mom,
+A21,152,687,680,680,680,655,got you,car truck brush box,,box,box,,box,
+A21,153,688,683,683,683,658,again,car truck brush box,,child,box,,mom,
+A21,154,690,686,685,685.5,660.5,can you say one two three,car truck brush box,,child,box,,box,
+A21,155,692,691,698,691.5,666.5,fall down car,car truck brush box,car,car,,,car,car box
+A21,156,702,692,702,702,677,yeah the car fell down,car truck brush box,car,box,box,,car,car
+A21,157,708,705,705,705,680,lets see if i can do this again,car truck brush box,,,box,,mom,
+A21,158,709,706,707,706.5,681.5,no,car truck brush box,,child,,,mom,
+A21,159,710,708,708,708,683,want me stop,car truck brush box,,child,box,,mom,
+A21,160,716,709,709,709,684,okay,car truck brush box,,box,box,,box,
+A21,161,717,716,716,716,691,oh careful,car truck brush box,,box,box,,box,
+A21,162,724,718,718,718,693,careful dont throw too far,car truck brush box,,box,box,,box,box
+A21,163,725,724,724,724,699,next toy,car truck brush box dog pig,,,,,,mom
+A21,164,729,727,727,727,702,ha,car truck brush box dog pig,,dog pig,,,dog pig,
+A21,165,733,729,728,728.5,703.5,whats this,car truck brush box dog pig,dog pig,child,,,dog pig,
+A21,166,734,733,732,733.5,708.5,look,car truck brush box dog pig,,dog pig,,,dog pig,
+A21,167,739,734,733,733.5,708.5,what is this,,dog pig,dog pig,,,dog pig,
+A21,168,743,738,736,737,712,ah you love stuffed animals dont you,,,dog pig,dog pig,,,
+A21,169,749,740,739,739.5,714.5,what is this chris,,pig,pig,dog pig,,,
+A21,170,752,747,747,747,722,what is this,dog pig,pig,pig,pig,,pig,
+A21,171,755,751,751,751,726,i think its a pig,dog pig,pig,pig,pig,,pig,mom
+A21,172,756,753,753,753,728,what sound does a pig make,dog pig,pig,child,pig,,pig,
+A21,173,757,756,756,756,731,no,dog pig,,child,pig,,pig,pig
+A21,174,759,758,757,758.5,733.5,a pig goes oink oink oink,dog pig,pig,child,pig,,pig,pig
+A21,175,764,759,759,759,734,oink oink oink,dog pig,,child,pig,,pig,pig
+A21,176,766,764,164,765,740,give the pig a kiss,dog pig,pig,child,pig,,pig,pig
+A21,177,767,766,766,766,741,ahhh,dog pig,,child,pig,,pig,pig
+A21,178,770,767,767,767,742,thats so sweet,dog pig,,child,pig,,pig,pig
+A21,179,772,770,769,769.5,744.5,ears yeah ears hes got,dog pig,pig,pig,pig,,pig,pig
+A21,180,774,772,771,771.5,746.5,nose,dog pig,pig,pig,pig,,pig,pig
+A21,181,781,774,773,773.5,748.5,does he have a mouth,dog pig,pig,pig,pig,,pig,pig
+A21,182,784,779,780,779.5,754.5,hes got  legs,dog pig,pig,pig,pig,,pig,pig
+A21,183,787,784,783,783.5,758.5,toes yeah,dog pig,pig,pig,pig,,pig,pig
+A21,184,792,786,785,785.5,760.5,hes got arms,dog pig,pig,pig,pig,,pig,pig
+A21,185,794,791,791,791,766,hi chris,dog pig,,child,pig,,pig,pig
+A21,186,797,794,794,794,769,what is that,dog pig,dog,dog,pig,,dog,dog
+A21,187,800,796,796,796,771,doggy what sound does a doggy make,dog pig,dog,child,,,dog,dog
+A21,188,802,801,800,801.5,776.5,no you know what sound a doggy makes,dog pig,dog,child,,,dog,dog
+A21,189,805,803,803,803,778,ruff ruff ruff,dog pig,,dog,,,dog,dog
+A21,190,806,805,805,805,780,eyes,dog pig,dog,dog,,,dog,dog
+A21,191,808,806,806,806,781,does he have a nose,dog pig,dog,child,,,dog,dog
+A21,192,809,808,807,808.5,783.5,wheres his nose,dog pig,dog,child,,,dog,dog
+A21,193,812,809,809,809,784,ha theres his nose,dog pig,dog,child,,,dog,dog
+A21,194,814,812,812,812,787,whats that,dog pig,dog,dog,,,dog,dog
+A21,195,815,813,813,813,788,toes,dog pig,dog,child,,,dog,dog
+A21,196,817,815,815,815,790,whats this,dog pig,dog,dog,,dog,pig,dog
+A21,197,822,820,820,820,795,it does look like a panda doesnt it,dog pig,pig,pig,dog,,pig,pig
+A21,198,823,822,822,822,797,its black and white,dog pig,pig,pig,dog,,pig,pig
+A21,199,824,824,823,824,799,yeah,dog pig,,pig,dog,,pig,pig
+A21,200,826,825,824,825.5,800.5,but you know you can tell by the nose that its a pig,dog pig,pig,pig,dog,pig,pig,pig
+A21,201,832,827,826,826.5,801.5,cause hes got a flat nose,dog pig,pig,pig,,,pig,pig
+A21,202,833,830,831,830.5,805.5,do that,dog pig,,pig,pig,,pig,
+A21,203,838,832,832,832,807,okay,dog pig,,pig,pig,,pig,
+A21,204,839,836,836,836,811,yeah,dog pig,,child,pig,,pig,pig
+A21,205,840,838,838,838,813,hi chris,dog pig,,child,pig,,pig,pig
+A21,206,846,839,840,839.5,814.5,im a pig,dog pig,pig,child,pig,,pig,pig
+A21,207,851,846,846,846,821,does a pig have a tail,dog pig,pig,child,pig,,pig,pig
+A21,208,854,851,852,851.5,826.5,right there,dog pig,pig,child,pig,,pig,pig
+A21,209,855,853,853,853,828,does the doggy have a tail,dog pig,dog,child,pig,,pig,pig
+A21,210,858,855,856,855.5,830.5,yes,dog pig,,,pig,,pig,pig
+A21,211,861,857,857,857,832,wheres the doggys tail,dog pig,dog,,pig,dog,pig,pig
+A21,212,864,859,859,859,834,right there,dog pig,dog,,pig,,dog,pig
+A21,213,866,863,864,863.5,838.5,do that,dog pig,,dog,pig,,dog,dog
+A21,214,870,865,865,865,840,oh i cant do that with this one,dog pig,dog,dog,dog pig,,dog,dog
+A21,215,871,868,867,867.5,842.5,yeah cause see this one is a puppet,dog pig,pig,pig,dog pig,,pig,
+A21,216,872,869,868,868.5,843.5,you can put your hand in it,dog pig,pig,pig,dog pig,pig,pig,
+A21,217,874,871,871,871,846,you wanna do it,dog pig,,child,dog pig,,pig,
+A21,218,875,873,872,872.5,847.5,put your hand in it,dog pig,pig,pig,pig,,pig,pig
+A21,219,877,875,875,875,850,okay,dog pig,,pig,pig,,pig,pig
+A21,220,884,879,879,879,854,okay,dog pig,,pig,pig,,,
+A21,221,886,883,884,883.5,858.5,hi doggy,dog pig,dog,pig,dog pig,,,
+A21,222,888,887,886,887.5,862.5,should the pig give the doggy a kiss,dog pig,pig dog,child,dog pig,,dog pig,
+A21,223,891,888,888,888,863,okay,dog pig,,child,dog pig,,dog pig,dog pig
+A21,224,892,891,891,891,866,kiss,dog pig,,child,dog pig,,dog pig,dog pig
+A21,225,897,893,892,892.5,867.5,you wanna give the pig a hug,dog pig,pig,child,dog pig,,pig,dog pig
+A21,226,900,895,895,895,870,ahhh,dog pig mickey,,child,dog pig,,pig,pig
+A21,227,903,901,900,900.5,875.5,huh,dog pig mickey,,child,pig,,pig,pig
+A21,228,906,904,903,903.5,878.5,oh you want the animals to see mickey,dog pig mickey,dog pig mickey,child,,,mom,dog pig
+A21,229,910,906,905,905.5,880.5,oh thats okay sweetie well do that in a few minutes okay,dog pig mickey,,child,child,,,dog pig
+A21,230,913,909,910,909.5,884.5,can they play first,dog pig mickey,dog pig,child,child,,,dog pig
+A21,231,916,912,913,912.5,887.5,theres mickey,dog pig mickey,mickey,mickey,child,mickey,mickey,dog pig
+A21,232,920,915,914,914.5,889.5,you want to show mickey to the animals,dog pig mickey,dog pig mickey,child,child,,mickey,dog pig
+A21,233,924,948,917,920.5,895.5,ahh,dog pig mickey,,mickey,,,mickey,dog pig
+A21,234,928,922,920,921,896,did mickey give the pig a kiss,dog pig mickey,pig mickey,child,,,mickey,dog pig
+A21,235,931,925,924,924.5,899.5,what a good mickey mouse,dog pig mickey,mickey,child,child,,mickey,dog pig
+A21,236,938,928,928,928,903,a good mickey mouse,dog pig mickey,mickey,child,child,,mickey,dog pig
+A21,237,939,938,937,938.5,913.5,the car,dog pig mickey,car,child,,,mom,pig
+A21,238,945,939,938,938.5,913.5,whered the car go,dog pig mickey,car,,,,mom,pig
+A21,239,946,942,942,942,917,whered the car and the truck go,dog pig mickey,car truck,,,,,pig
+A21,240,947,944,944,944,919,i dont know,dog pig mickey,,,,,,pig
+A21,241,953,946,946,946,921,i dont know,dog pig mickey,,child,,,mickey,pig
+A21,242,954,949,949,949,924,find the car,dog pig mickey,car,,child,,,pig
+A21,243,955,951,951,951,926,car,dog pig mickey,car,child,child,,mom,pig
+A21,244,960,953,953,953,928,maybe we can find the car,dog pig mickey,car,,,,,

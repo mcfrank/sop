@@ -1,0 +1,185 @@
+"video","utt.num","time.coder1","time.coder2","time.coder3","time.agg","time.agg.adj","utt","objects.present","objects.referred","mom.eyes","mom.hands","mom.point","kid.eyes","kid.hands"
+"A20",1,30,30,26,30,0,"this is a pig","dog pig","pig","child","pig",,"dog","dog"
+"A20",2,34,34,29,34,4,"daddys been trying to teach you how to say pig","dog pig","pig","child","pig",,"dog","dog"
+"A20",3,37,37,32,37,7,"thats right thats a doggy","dog pig","dog","child","pig",,"dog","dog"
+"A20",4,40,40,36,40,10,"this is a pig","dog pig","pig","child","pig",,"pig","dog pig"
+"A20",5,42,42,38,42,12,"can you say pig","dog pig","pig","child","pig",,"pig","dog pig"
+"A20",6,44,43,40,43.5,13.5,"ok","dog pig",,"child",,,"pig","dog pig"
+"A20",7,52,52,42,52,22,"do you want to wear the pig","dog pig","pig","child",,,"pig","dog pig"
+"A20",8,54,54,51,54,24,"this is the doggy","dog pig","dog","child","dog",,"dog","dog pig"
+"A20",9,57,56,53,56.5,26.5,"and this is the pig","dog pig","pig","child","dog pig",,"pig","dog pig"
+"A20",10,62,62,57,62,32,"ohhh see how the pig can hold your nose","dog pig","pig","child","dog pig",,"pig",
+"A20",11,63,63,60,63,33,"nose","dog pig",,"child","pig",,"mom","dog"
+"A20",12,67,67,62,67,37,"wheres the pigs nose","dog pig","pig","pig","pig",,"pig","dog"
+"A20",13,70,70,65,70,40,"show me the pigs nose","dog pig","pig","child","pig",,"pig","dog"
+"A20",14,72,72,68,72,42,"thats the pigs ear","dog pig","pig","pig","pig",,"pig","dog pig"
+"A20",15,78,78,71,78,48,"wheres the pigs nose","dog pig","pig","child","pig",,"pig","dog"
+"A20",16,81,82,75,81.5,51.5,"are you hugging the pig","dog pig","pig","child","child pig",,"pig","dog pig"
+"A20",17,87,87,80,87,57,"can you hug the doggy","dog pig","dog","child","pig",,"dog","dog"
+"A20",18,90,89,86,89.5,59.5,"ahhh","dog pig",,"child","pig",,,"dog"
+"A20",19,99,98,88,98.5,68.5,"wheres the doggys nose","dog pig","dog","child","pig",,,"dog"
+"A20",20,100,100,97,100,70,"yeah","dog pig",,"child",,,,"dog pig"
+"A20",21,,104,98,101,71,"can you put your hand inside","dog pig","pig","pig","pig",,"pig","dog pig"
+"A20",22,104,108,103,103.5,73.5,"ohh where did your hand go","dog pig",,"child","pig",,"pig","dog pig"
+"A20",23,107,111,107,107,77,"hello caitlin","dog pig",,"child","pig",,"pig","dog pig"
+"A20",24,109,113,110,109.5,79.5,"hello","dog pig",,"child","pig",,"pig","dog pig"
+"A20",25,117,117,111,117,87,"hello caitlin","dog pig",,"child","pig",,"pig","dog pig"
+"A20",26,129,129,116,129,99,"you want to show dee the pig","dog pig","pig","child",,,,"dog pig"
+"A20",27,132,132,127,132,102,"whooo","dog pig",,"pig",,,"pig","dog pig"
+"A20",28,136,139,131,137.5,107.5,"the pig makes noise","dog pig","pig","child",,,"pig","dog pig"
+"A20",29,141,142,134,141.5,111.5,"oh","dog pig",,"pig","pig",,"pig","dog pig"
+"A20",30,143,143,140,143,113,"can you squeak it","dog pig","pig","pig","pig",,"pig","dog pig"
+"A20",31,145,145,142,145,115,"its up there","dog pig","pig","pig","pig",,"pig","dog pig"
+"A20",32,147,146,143,146.5,116.5,"those are the ears","dog pig","pig","pig","pig",,"pig","dog pig"
+"A20",33,153,152,145,152.5,122.5,"its on the forehead","dog pig","pig","pig","pig",,"pig","dog pig"
+"A20",34,160,160,151,160,130,"frustrating","dog pig",,"pig",,,,
+"A20",35,163,223,159,161,131,"is that no thats a doggy","dog pig","dog","dog","pig",,"dog","dog"
+"A20",36,165,164,162,164.5,134.5,"buppie","dog pig",,"child","pig",,"dog","dog"
+"A20",37,167,166,164,166.5,136.5,"i think buppies in your crib","dog pig",,"child","pig",,"dog","dog"
+"A20",38,171,170,165,170.5,140.5,"buppies a lot bigger","dog pig",,"child","pig",,"dog","dog"
+"A20",39,175,174,169,174.5,144.5,"and buppies a bear","dog pig",,"child","pig",,,"dog"
+"A20",40,176,176,173,176,146,"yeah thats a doggy","dog","dog","child","pig",,,"dog"
+"A20",41,185,184,174,184.5,154.5,"you think theres something else in there","dog",,"child","pig",,,"dog"
+"A20",42,188,187,184,187.5,157.5,"what sound does a doggy make","dog pig","dog","child","pig child",,"mom","dog"
+"A20",43,190,189,186,189.5,159.5,"thats my microphone","dog pig",,"mom","pig",,"mom","dog"
+"A20",44,194,193,188,193.5,163.5,"what sound does the doggy make","dog pig","dog","child","pig",,"mom","dog"
+"A20",45,195,194,192,194.5,164.5,"thank you","dog pig",,,"pig",,,"dog"
+"A20",46,197,197,193,197,167,"can i put it back in","dog pig",,,"pig",,"mom","dog"
+"A20",47,210,208,195,209,179,"can we put it back in","dog pig",,"child","pig",,"mom","dog"
+"A20",48,212,211,206,211.5,181.5,"should we put the dog the doggy in here","dog pig","dog",,"pig",,,"dog"
+"A20",49,215,214,209,214.5,184.5,"you want the doggy to have a place to sit","dog pig","dog",,"pig",,,"dog"
+"A20",50,218,217,213,217.5,187.5,"sit","dog pig",,,"pig",,,"dog"
+"A20",51,220,220,216,220,190,"we could we could put the pig in there","dog pig","pig","child","pig",,"pig","dog"
+"A20",52,223,223,218,223,193,"they could have a party","dog pig",,"child",,,"pig","dog"
+"A20",53,227,227,221,227,197,"party","dog pig",,"child",,,"pig","dog"
+"A20",54,232,232,226,232,202,"now the doggy and the pig are with boujeval","dog pig",,"dog pig",,,"dog pig",
+"A20",55,235,235,231,235,205,"wheres figment","dog pig","dog pig","child",,,,
+"A20",56,238,238,234,238,208,"do you want to go get figment","dog pig",,,,,,
+"A20",57,241,240,236,240.5,210.5,"is figment over there","dog pig",,,,,,
+"A20",58,247,247,239,247,217,"oh youre going to take boujeval over","dog pig",,,,,,
+"A20",59,259,258,245,258.5,228.5,"time to get out","dog pig",,,,,,
+"A20",60,262,261,257,261.5,231.5,"you did it","dog pig",,"pig",,,"pig","pig"
+"A20",61,262,262,260,262,232,"you did it","dog pig",,"pig",,,"pig","pig"
+"A20",62,267,267,261,267,237,"i dont think the doggy does it","dog pig","dog","dog",,,"dog","dog"
+"A20",63,277,277,266,277,247,"oink oink oink oink oink oink oink","dog pig",,"child",,,"mom","pig"
+"A20",64,282,281,276,281.5,251.5,"i think that the doggy goes woof",,"dog","child",,,,
+"A20",65,286,286,279,286,256,"whats that",,,,,,,
+"A20",66,290,289,284,289.5,259.5,"is that jewelry",,,"mom",,,"mom","mom"
+"A20",67,291,290,287,290.5,260.5,"you think so",,,"child",,,"mom","mom"
+"A20",68,295,296,288,295.5,265.5,"its kind of ugly for jewelry",,,"child",,,,"mom"
+"A20",69,297,297,294,297,267,"put it back",,,"mom",,,,
+"A20",70,303,303,295,303,273,"you snap it in there",,,"child","mom",,"pig",
+"A20",71,318,318,301,318,288,"you going to put it inside the pig","dog pig","pig","child",,,"mom","pig"
+"A20",72,322,321,316,321.5,291.5,"woof woof woof woof","dog pig",,"dog","dog",,"dog",
+"A20",73,330,329,320,329.5,299.5,"woof woof","dog pig",,"child","dog",,,
+"A20",74,332,331,328,331.5,301.5,"can i have this",,,"child",,,"mom",
+"A20",75,334,334,330,334,304,"can we snap it back in here",,,"mom","mom",,"mom",
+"A20",76,336,336,333,336,306,"please",,,"mom","mom",,"mom",
+"A20",77,338,338,335,338,308,"thank you",,,"mom","mom",,"mom",
+"A20",78,341,340,336,340.5,310.5,"please",,,"child","mom",,"mom",
+"A20",79,344,344,339,344,314,"i dont think it would look very good in my hair",,,"child","mom",,"mom",
+"A20",80,345,344,342,344.5,314.5,"please",,,"child",,,"mom",
+"A20",81,347,347,343,347,317,"do you want to wear it",,,"child",,,,
+"A20",82,349,349,345,349,319,"do you want to wear it",,,"child",,,,
+"A20",83,353,353,347,353,323,"see if we snap it back in then we can put it on you",,,"mom","mom",,"mom",
+"A20",84,355,355,352,355,325,"shall we try it on you",,,"child","mom",,"mom",
+"A20",85,362,362,354,362,332,"try",,,"child",,,,
+"A20",86,367,367,361,367,337,"now you have to say sterling words of wisdom",,,"child","child",,,
+"A20",87,371,370,365,370.5,340.5,"can you say penache",,,"child",,,"mom",
+"A20",88,372,372,369,372,342,"how bout azerbaijan",,,"child",,,"mom",
+"A20",89,374,373,371,373.5,343.5,"uhoh",,,"child",,,,
+"A20",90,376,375,372,375.5,345.5,"it came off",,,,,,,
+"A20",91,377,376,375,376.5,346.5,"shall we put it back on",,,"child",,,"mom",
+"A20",92,383,382,376,382.5,352.5,"see you want it back on too",,,"child",,,"mom",
+"A20",93,384,383,382,383.5,353.5,"what other words",,,"child","child",,,
+"A20",94,387,386,383,386.5,356.5,"how about pig",,"pig","child","child",,,
+"A20",95,391,391,385,391,361,"ahhh","dog pig",,"child",,,"mom",
+"A20",96,393,393,390,393,363,"theres the doggy","dog pig","dog","dog","dog",,"dog","dog"
+"A20",97,408,408,392,408,378,"you dont have a doggy","dog pig","dog","dog",,,,"dog"
+"A20",98,413,413,406,413,383,"can i wear it","dog",,,,,,"dog"
+"A20",99,419,417,412,418,388,"then when i say penache they can hear me","dog",,"child",,,"mom","mom"
+"A20",100,419,419,415,419,389,"i know",,,"mom","mom",,"mom","mom"
+"A20",101,424,422,416,423,393,"dont you i know you want one too but",,,"child",,,"mom",
+"A20",102,427,427,421,427,397,"caitlin they want you to have the doggy and they want me to have this",,"dog","child",,,"mom",
+"A20",103,433,432,426,432.5,402.5,"i know theyre very bossy",,,"child","dog",,"mom","mom"
+"A20",104,433,433,431,433,403,"here caitlin look","dog pig car truck",,"car truck",,,"mom",
+"A20",105,437,437,432,437,407,"maybe you can play with those toys if you let me have this","dog pig car truck","car truck","car truck","child",,"car truck",
+"A20",106,441,441,436,441,411,"toy","dog pig car truck",,"car truck",,,"car truck",
+"A20",107,444,444,440,444,414,"oh look at that","dog pig car truck","car","car","car",,,
+"A20",108,446,446,443,446,416,"thats a red car","dog pig car truck","car","car","car",,,
+"A20",109,450,449,446,449.5,419.5,"you have a red car too","dog pig car truck","car","car",,"car",,
+"A20",110,456,456,449,456,426,"you have a red car","car truck","car",,,,"car","car"
+"A20",111,462,462,455,462,432,"toy","car","car","child",,,"mom","car"
+"A20",112,464,464,460,464,434,"yeah","car truck",,"truck","truck",,,"car"
+"A20",113,467,467,462,467,437,"can we make the can we make the car go","car truck","car","truck","truck",,,"car"
+"A20",114,471,471,466,471,441,"can you make your car go","car truck","car","truck","truck",,"mom","car"
+"A20",115,476,475,470,475.5,445.5,"you have this red car too","car truck","car",,,,"mom","car"
+"A20",116,478,478,473,478,448,"can you push that car","car truck","car","child",,,"mom","car"
+"A20",117,480,480,476,480,450,"yeah","car",,"car",,,"car","car"
+"A20",118,487,486,479,486.5,456.5,"that car goes really well","car","car","car",,,"car","car"
+"A20",119,507,507,486,507,477,"whoops","car",,"child",,,,
+"A20",120,514,513,506,513.5,483.5,"did the puppy go away","dog pig","dog",,,,,
+"A20",121,517,517,512,517,487,"Dont you want to play with the cars","dog pig","car truck","child","truck",,,
+"A20",122,530,529,516,529.5,499.5,"everybodys gonna stay out","car truck",,"child","truck",,,"car"
+"A20",123,533,533,528,533,503,"Dont those belong on there","car truck","truck","truck",,,"truck","car truck"
+"A20",124,535,534,532,534.5,504.5,"this is teddy bears","car truck","truck","truck","truck",,"truck","car"
+"A20",125,537,537,533,537,507,"theres a picture of a teddy bear on there","car truck","truck","truck","truck",,"truck","car"
+"A20",126,558,558,536,558,528,"maybe this is a circus truck  and it carries teddy bears","car truck","truck","truck","truck",,"truck","car"
+"A20",127,560,560,556,560,530,"look that opens up","car truck","car","car",,,"car",
+"A20",128,563,562,559,562.5,532.5,"does this side open","car truck","car","car",,"car","car","car"
+"A20",129,565,565,562,565,535,"does the other door open","car truck","car","car",,"car","car","car"
+"A20",130,567,567,564,567,537,"do you think that door opens","car truck","car","car",,"car","car","car"
+"A20",131,569,569,566,569,539,"door","car truck",,"car",,"car","car","car"
+"A20",132,571,571,567,571,541,"put your finger in the window","car truck","car","car",,,"car","car"
+"A20",133,573,572,569,572.5,542.5,"there it goes","car truck",,"car",,,"car","car"
+"A20",134,574,573,571,573.5,543.5,"ahhh","car truck",,"car",,,"car","car"
+"A20",135,575,575,572,575,545,"yeah","car truck",,"car",,,"car","car"
+"A20",136,578,578,574,578,548,"both doors open","car truck","car","car",,,"car","car"
+"A20",137,581,580,577,580.5,550.5,"is anybody in there","car truck","car","child",,,"mom","car"
+"A20",138,583,582,579,582.5,552.5,"is anybody in the car","car truck","car","child",,,"mom","car"
+"A20",139,584,584,581,584,554,"mommys in the car","car truck","car","car",,,"car","car"
+"A20",140,586,586,583,586,556,"no im right here","car truck",,"car",,,"car","car"
+"A20",141,589,589,585,589,559,"look at that","car truck",,"car",,"car","car","car"
+"A20",142,595,595,588,595,565,"can you close the doors","car truck","car","car",,,"car","car"
+"A20",143,599,598,594,598.5,568.5,"how bout that","car truck",,"car",,,"car","car"
+"A20",144,600,600,598,600,570,"you","car truck",,"car",,,"car","car"
+"A20",145,604,604,659,604,574,"bye","car truck",,"child",,,"mom","car"
+"A20",146,609,609,603,609,579,"can you open them up again","car truck","car","car",,,"car","car"
+"A20",147,615,615,608,615,585,"there they go","car truck","car","car",,,"car","car"
+"A20",148,629,628,614,628.5,598.5,"you did it","car truck",,"car",,,"car","car"
+"A20",149,637,637,627,637,607,"do you want to put them all in a row","car truck","car truck","truck",,"truck","truck","car"
+"A20",150,641,640,636,640.5,610.5,"does the trunk open","car truck","car","car",,"car","car","car"
+"A20",151,644,643,638,643.5,613.5,"do you think the back part opens","car truck","car","car","car",,"car","car"
+"A20",152,646,644,642,645,615,"no","car truck",,"car",,,"car","car"
+"A20",153,648,647,643,647.5,617.5,"just the doors","car truck","car","child",,,"mom","car"
+"A20",154,658,658,646,658,628,"just the doors i think","car truck","car","child",,,"mom","car"
+"A20",155,668,666,656,667,637,"there it is","dog pig car truck","truck","child",,,,"car truck"
+"A20",156,668,669,664,668.5,638.5,"there they go","dog pig car truck","car truck","car truck",,,"car truck",
+"A20",157,676,675,667,675.5,645.5,"whats next","dog pig",,"child",,,,
+"A20",158,712,1091,674,693,663,"i was going to say do you have a pen in there","dog pig",,,,,,
+"A20",159,1099,1099,1090,1099,1069,"ok","brush box dog pig car truck",,"box",,,"box","box"
+"A20",160,1102,1101,1097,1101.5,1071.5,"whats in here","brush box dog pig car truck","box","box",,,"box","box"
+"A20",161,1103,1103,1100,1103,1073,"party","brush box dog pig car truck",,"child",,,,"brush"
+"A20",162,1106,1106,1101,1106,1076,"huh","brush box dog pig car truck",,"child",,,,"brush"
+"A20",163,1111,1111,1104,1111,1081,"what happened to your sock","brush box dog pig car truck",,"child","child",,"brush","brush"
+"A20",164,1116,1117,1110,1116.5,1086.5,"i think your sock got all slid down","brush box dog pig car truck",,"child","child",,"child","brush"
+"A20",165,1119,1119,1115,1119,1089,"uh huh those are your shoes","brush box dog pig car truck",,"child","child",,"child","brush"
+"A20",166,1123,1122,1117,1122.5,1092.5,"mhmmm","brush box dog pig car truck",,"child","child",,"child","brush"
+"A20",167,1137,1137,1122,1137,1107,"lets pull your sock up","brush box dog pig car truck",,"child","child",,"child","brush"
+"A20",168,1141,1141,1136,1141,1111,"now what","brush box dog pig car truck",,"child","child",,,
+"A20",169,1144,1144,1140,1144,1114,"shoes your shoes are all ready","brush box dog pig car truck",,"child","child",,,
+"A20",170,1146,1146,1143,1146,1116,"there theyre all ready","brush box dog pig car truck",,"child","child",,,
+"A20",171,1152,1151,1145,1151.5,1121.5,"wheres that pig","brush box dog pig car truck","pig","pig",,,"pig",
+"A20",172,1154,1154,1150,1154,1124,"whoops","brush box dog pig car truck",,"child",,,"mom","pig"
+"A20",173,1159,1159,1153,1159,1129,"do you want to what could you do with the brush and the pig","brush box dog pig car truck","brush pig","child","brush",,"brush","brush pig"
+"A20",174,1162,1161,1158,1161.5,1131.5,"hello caitlin",,,"child","pig",,"pig","pig"
+"A20",175,1170,1169,1160,1169.5,1139.5,"hello",,,"child","pig",,,
+"A20",176,1179,1178,1168,1178.5,1148.5,"and a kiss",,,"child","pig",,,
+"A20",177,1182,1182,1178,1182,1152,"thank you",,,"child","child pig",,,"mom"
+"A20",178,1184,1184,1181,1184,1154,"can you give the pig a kiss",,"pig","child","pig",,"pig",
+"A20",179,1185,1185,1182,1185,1155,"shall we kiss the pig","box dog pig car truck","pig","pig","pig",,"dog",
+"A20",180,1186,1186,1184,1186,1156,"no kiss the dog","box dog pig car truck","dog","child","pig",,"dog","dog"
+"A20",181,1189,1188,1185,1188.5,1158.5,"yeah","box dog pig car truck",,"child","pig",,"dog","dog"
+"A20",182,1195,1194,1187,1194.5,1164.5,"yeah cause you know what that doggy is","box dog pig car truck","dog","child","pig",,"dog","dog"
+"A20",183,1200,1199,1192,1199.5,1169.5,"are you going to give her the dog","dog","dog","child","pig",,,"dog"
+"A20",184,1204,1203,1198,1203.5,1173.5,"ok","dog",,"child","pig",,"purse ball","dog"
