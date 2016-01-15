@@ -1,5 +1,5 @@
 ---
-title: "A performance model for early cognitive development"
+title: "A performance model for early word learning"
 output: 
     kmr::cogsci_paper:
         includes: 
@@ -20,7 +20,7 @@ papers and standard posters (i.e., those presentations that will be
 represented by six page papers in the Proceedings)."
     
 keywords:
-    "Add your choice of indexing terms or keywords; kindly use a semi-colon; between each term."
+    "Speed of processing; development; word learning; meta-analysis"
 ---
 
 ```{r global_options, include=FALSE}
@@ -32,15 +32,25 @@ knitr::opts_chunk$set(fig.width=3.5, fig.height=3, fig.crop = FALSE,
 ```
 
 ```{r, libraries}
-# library(png)
-# library(grid)
-# library(knitr)
 library(ggplot2)
-# library(xtable)
 library(dplyr)
 library(langcog)
 library(directlabels)
 theme_set(theme_bw())
+```
+
+```{r}
+# This chunk gives the functions used below
+
+kail.fun <- function (i, a, b, c) {
+  a + b * exp(-c * i)
+}
+
+inv.logit <- boot::inv.logit # get inv.logit from boot library
+
+acc.fun <- function(i, alpha, beta) {
+  inv.logit(alpha + beta * i)
+}
 ```
 
 # Introduction
@@ -57,7 +67,7 @@ My goal in this paper is to describe a first stab at a simple performance model 
 
 The basic assumptions of our performance model are familiar from many other process models [@anderson1996], namely that every cognitive operation has a processing time and a probability of failure. Each complex cognitive operation is decomposable into a chain of simpler operations, any one of which can fail. And if a single link in the chain fails, then the overall operation fails as well. Thus, the probability of failure is the product of the individual failures. Similarly for timing, the total processing time for a chain of operations is the sum of the processing times for the parts. 
 
-As is immediately clear, complex actions are describable at many different grain sizes. This is a strength rather than a weaknesses of the basic framework, which can be applied to units at any grain size. \footnote{[@smith2013] describe a similar analysis of reading times for words where they make clear that ..}
+As is immediately clear, complex actions are describable at many different grain sizes. This is a strength rather than a weaknesses of the basic framework, which can be applied to units at any grain size.^[@smith2013 describe a similar analysis of incremental reading times for words where they show that the basic logic of multiplicative probability and additive reaction time holds at any grain size.]
 
 ...
 
@@ -91,12 +101,15 @@ sims <- expand.grid(n = ns,
   ungroup() %>%
   mutate(s = factor(s))
 
-ggplot(sims, aes(x = n, y = p, col = s)) + 
+ggplot(sims, aes(x = n, y = p, col = factor(s))) + 
   geom_line() + 
-  facet_wrap(~theta)
-  # geom_hline(yintercept = .5, lty = 2) 
+  facet_wrap(~theta) + 
+  scale_colour_solarized(guide=FALSE) + 
+  geom_dl(aes(label = s), method = "first.qp") + 
+  xlim(c(min(ns)-1, max(ns)))
 ```
-Figure 1. Probability p of successsfully executing a chain of operations with $n$ steps, plotted by the probability of success $s$. Facets show diferent temporal thresholds $\theta$
+
+Figure 1. Probability p of successsfully executing a chain of operations with $n$ steps, plotted by the probability of success $s$. Facets show diferent temporal thresholds $\theta$.
 
 The simulations in Figure 1 show a simple result: long chains of operations are unlikely to succeed unless individual operations are very fast and very accurate. Even assuming the median time to execution for a single step is 1s ($e^{\mu}=1$), successful and timely execution of multi-step sequences is very unlikely within a reasonable time frame. For example, with a cutoff of $\theta = 6s$, chains of length 3 were only successful half the time if each separate sub-action was extremely likely to succeed ($s > .9$). At shorter values of $\theta$, virtually no chains of length 3 were successful.
 
@@ -106,20 +119,20 @@ Of course, to be meaningful, these simulations require estimates for the values 
 
 The two posited capacities in our model are speed and accuracy. It seems clear that, for an individual cognitive operation or set of operations, both of these should change dramatically across development. How does developmental change look for these abilities? 
 
-We first consider the development of processing speed. Pioneering work by Kail [see e.g., @kail1991] describes the developmental trajectory of reaction times for individual tasks. He notes that empirically, the slope of these reaction times follows an exponential, such that
+We first consider the development of processing speed. Pioneering work by Kail (see e.g., [-@kail1991]) describes the developmental trajectory of reaction times for individual tasks. He notes that empirically, the slope of these reaction times follows an exponential, such that
 
-$$Y = a + b e^{-ci}$$
+$$Y(i) = a + b e^{-ci}$$
 
 Where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. To illustrate this model, we replot the slowing function from @kail1991 in Figure 2, but extend the function into infancy.
 
 ```{r}
-a <- 1
-b <- 5.16
-c <- 0.21
+a.samp <- 1 # asymptote (s)
+b.samp <- 5.16 # multiplier 
+c.samp <- 0.21 # developmental parmeter
 
-xs <- seq(0,20,.1)
-d <- data.frame(x = xs,
-                y = a + b * exp(-c * xs))
+ages <- seq(0,20,.1)
+d <- data.frame(x = ages,
+                y = kail.fun(ages, a = a.samp, b = b.samp, c = c.samp))
 qplot(x, y, geom=c("line"), 
       data=d) + 
   geom_hline(aes(yintercept=1), lty=2) + 
@@ -131,22 +144,19 @@ qplot(x, y, geom=c("line"),
 
 The [@kail1991] model is a model of RT multipliers. Since operations are additive, these multipliers should apply to individual operations or to chains of operations equivalently: if the multiplier is constant then it can be factored out. 
 
-For simplicity, we consider the probability of success on a single operation changing across time as a logistic. This function is constrained to be 0 at infancy (but see e.g., [@hidaka2013] for a more sophisticated approach to learning curves). 
+For simplicity, we consider the probability of success on a single operation changing across time as a logistic. This function is constrained to be 0 at infancy (but see e.g., [@hidaka2013] for a more sophisticated approach to learning curves):
+
+$$Y(i) = \frac{1}{1 + e^{\alpha + \beta i}}$$
+
+\noindent where $\alpha$ sets the intercept and $\beta$ marks the developmental multiplier, as in a standard logistic regression. 
 
 ## Development of speed and accuracy
 
 So now let's generalize these functions so that we can look at their joint effects on performance.
 
-```{r}
-inv.logit <- boot::inv.logit # get inv.logit from boot library
-
-accuracy <- function(x, a = -2, b = .3) {
-  inv.logit(a + b * x)
-}
-  
-rt.multiplier <- function (x, a = 1, b = 5.16, c = .21) {
-  a + b * exp(-c * x)
-}
+```{r, fig.env='figure*'}
+alpha.samp = 2
+beta.samp = .3
 
 thetas <- 1:6
 ns <- 1:5
@@ -157,20 +167,20 @@ sims <- expand.grid(n = ns,
             age = ages,
             theta = thetas) %>%
   group_by(n, age, theta) %>%
-  do(data.frame(rt = rlnorm(nsims, meanlog = rt.multiplier(.$age - 1))*.$n, 
-                success = rbinom(nsims, .$n, accuracy(.$age)) == .$n)) %>%
+  do(data.frame(rt = rlnorm(nsims, 
+                            meanlog = kail.fun(.$age - 1,
+                                               a.samp, b.samp, c.samp))*.$n, 
+                success = rbinom(nsims, .$n, 
+                                 acc.fun(alpha.samp, beta.samp, 
+                                         .$age)) == .$n)) %>%
   mutate(relevant = rt < theta & success) %>%
   group_by(n, age, theta) %>%
   summarise(p = mean(relevant)) %>%
   mutate(theta = factor(as.character(paste0("theta=",as.character(theta)))))
   
-```
-
-```{r, fig.env="figure*", fig.align="center"}
 ggplot(sims, aes(x = age, y = p, col = factor(n))) + 
   geom_line() + 
   facet_wrap(~theta) +
-  # geom_hline(yintercept = .5, lty = 2) + 
   geom_dl(aes(label = factor(n)), method = "last.qp") + 
   scale_colour_solarized(guide=FALSE) + 
   ylab("Probability of successful chain") + 
@@ -188,7 +198,7 @@ To review: we now have a theoretical model that can make predictions about devel
 
 # Case Study: Early Word Learning
 
-Let's try applying this framework to early social word learning. One of the big puzzles of early language learning is *why* children begin to show evidence of language learning at the approximate developmental time they do, and not earlier or later [@tomasello1999]. Our framework provides a simple alternative: children may be trying to use language from very early, but the basic cognitive components may be too slow and too challenging to allow for consistent use (and consistent measurement by psychologists) until around the 1st birthday. The recent literature on early word learning gives some support for this contention, as more careful measurement has revealed some aspects of both receptive and productive language prior to the first birthday [@bergelson2012, @schneider2015].
+Let's try applying this framework to early social word learning. One of the big puzzles of early language learning is *why* children begin to show evidence of language learning at the approximate developmental time they do, and not earlier or later [@tomasello1999]. Our framework provides a simple alternative: children may be trying to use language from very early, but the basic cognitive components may be too slow and too challenging to allow for consistent use (and consistent measurement by psychologists) until around the 1st birthday. The recent literature on early word learning gives some support for this contention, as more careful measurement has revealed some aspects of both receptive and productive language prior to the first birthday [@bergelson2012; @schneider2015].
 
 We focus here on learning a word that is presented ostensively via a social cue like gaze or pointing, which we refer to as "social word learning." For simplicity, we decompose the task of social word learning into two abilities: 1) gaze following, and 2) word recognition. This task analysis is clearly incomplete or incorrect - for example, pointing is not the same as gaze following, and recognition is not the same as learning and retention. But it nevertheless captures some aspects of the task - following a socialcue to a distal target and processing some language associated with that target. And it has the major benefit for our purposes of providing data on development, since each of these tasks is well-studied.
 
@@ -197,22 +207,23 @@ We focus here on learning a word that is presented ostensively via a social cue 
 Let's begin by attempting to estimate developmental changes in the speed of processing a word. Of course there are many factors involved, including the frequency and general familiarity of the word. But the literature on infants' early language processing generally attempts to select simple, easy words that should be accessible to almost all children, so we can use this literature to get a rough-and-ready estimate of declines in reaction time across ages. 
 
 ```{r}
-d <- read.csv("../data/data.csv")
+d <- read.csv("../data/word_recognition_MA.csv") %>%
+    mutate(age_years = mean_age_1 / 365) 
 
 d.kid <- d %>% 
-  filter(age < 5) %>%
-  mutate(weight = 1/n)
+  filter(age_years < 5) %>%
+  mutate(weight = 1/n_1)
 d.adult <- d %>% 
-  filter(age > 20) %>% 
-  summarise(rt = mean(rt))
+  filter(age_years > 20) %>% 
+  summarise(rt = mean(x_1, na.rm=TRUE))
 
-ggplot(d.kid, aes(x = age, y = rt)) + 
-  geom_point(aes(size = n, col = study), 
+ggplot(d.kid, aes(x = age_years, y = x_1)) + 
+  geom_point(aes(size = n_1, col = short_cite), 
              position=position_dodge(width=.05)) + 
-  geom_linerange(aes(ymin = rt - cih, 
-                     ymax = rt + cil, 
-                     col = study), 
-                 position=position_dodge(width=.05)) +
+#   geom_linerange(aes(ymin = rt - cih, 
+#                      ymax = rt + cil, 
+#                      col = study), 
+#                  position=position_dodge(width=.05)) +
   geom_smooth(aes(weight = weight), 
               method="lm", formula=y ~ log(x), 
               col="black", lty=3) + 

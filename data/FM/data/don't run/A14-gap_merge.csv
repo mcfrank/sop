@@ -1,0 +1,88 @@
+"video","utt.num","time.coder1","time.coder2","time.coder3","time.agg","time.agg.adj","utt","objects.present","objects.referred","mom.eyes","mom.hands","mom.point","kid.eyes","kid.hands"
+"A14",1,260,260,265,260,0,"look it","pig",,"pig","pig",,"pig","pig"
+"A14",2,266,266,266,266,6,"now your hands in there","pig","pig","child","pig",,"pig","pig"
+"A14",3,268,269,268,268,8,"oh no you dont know how to do that huh here","pig",,"child","pig",,"pig",
+"A14",4,272,272,272,272,12,"hi michael","pig dog",,"child","pig",,"pig",
+"A14",5,281,280,281,281,21,"are you kissing him","dog","dog","child","pig",,,"dog"
+"A14",6,284,284,285,284,24,"theres a doggy","pig dog","dog","dog","dog pig",,"dog","dog"
+"A14",7,305,305,305,305,45,"are we ready for two new toys","pig dog",,"child","dog",,"dog","pig"
+"A14",8,310,310,311,310,50,"michael that made a noise listen","dog","pig","child","pig",,"dog","dog"
+"A14",9,314,315,315,315,55,"oh we didnt know that made a noise","pig","pig","child","pig",,"mom",
+"A14",10,319,319,319,319,59,"wow","pig",,"child",,,"pig","pig"
+"A14",11,323,323,323,323,63,"okay time for two new toys","pig dog",,"child","dog pig",,"dog pig",
+"A14",12,329,330,329,329,69,"michael michael","pig dog",,"child","brush",,"dog pig",
+"A14",13,333,333,333,333,73,"its okay honey you can play with those","pig dog","pig dog","child","child",,"dog pig","dog pig"
+"A14",14,338,338,338,338,78,"michael","pig dog",,"child","child",,,"pig"
+"A14",15,339,339,340,339,79,"oh come here honey come here","pig dog",,"child","child",,,"pig"
+"A14",16,342,342,342,342,82,"lets lets play with some other toys now huh","pig",,"pig","child pig",,"pig",
+"A14",17,344,345,345,345,85,"look at this whats that","brush","brush","child","child brush",,"brush","brush"
+"A14",18,348,348,348,348,88,"thats like a brush huh","brush","brush","child","child brush",,"brush","brush"
+"A14",19,365,365,365,365,105,"wow thats a neat thing isnt it","brush","brush","child",,,"brush","brush"
+"A14",20,374,374,374,374,114,"you gonna scrub the floor","brush",,"brush",,,"brush","brush"
+"A14",21,376,377,376,376,116,"can you scrub the floor with it","brush","brush","child","brush",,"brush","brush"
+"A14",22,381,381,381,381,121,"and scrub all the furniture","brush",,"child",,,"brush","brush"
+"A14",23,382,383,382,382,122,"oh yes youre so good at that michael","brush",,"child",,,"brush","brush"
+"A14",24,399,399,399,399,139,"and look at this","brush box","box","box","box",,"box","brush"
+"A14",25,401,401,401,401,141,"look at this box","brush box","box","child","box",,"box","brush"
+"A14",26,413,414,413,413,153,"pretty neat noises huh","brush box",,"child",,,"brush box","brush box"
+"A14",27,426,426,426,426,166,"michael why dont you come here","brush box",,"child",,,"brush box","brush box"
+"A14",28,429,429,429,429,169,"oop there it is","brush box","brush","child",,,"brush box","brush box"
+"A14",29,431,431,431,431,171,"why dont you come here so she can take a picture of you","brush box",,"child",,,"brush box","brush box"
+"A14",30,435,435,435,435,175,"come here come over here","brush box",,"child",,,"brush box","brush box"
+"A14",31,437,437,437,437,177,"come here","brush box",,"child",,,"mom","brush box"
+"A14",32,441,441,441,441,181,"come here","brush box",,"child",,,"brush box","brush box"
+"A14",33,445,445,444,445,185,"come here sweetie","brush box",,"child",,,"brush box","brush box"
+"A14",34,446,446,446,446,186,"come over here so she can take a picture of you","brush box",,"child","child",,"brush box","brush box"
+"A14",35,467,697,697,697,437,"honey lookit","car truck",,"truck","truck",,"car",
+"A14",36,699,700,700,700,440,"and this part moves can you see that","car truck","truck","truck","truck",,"truck","car truck"
+"A14",37,701,702,702,702,442,"can you make it move like that too","car truck","truck","child","truck",,"truck","car truck"
+"A14",38,706,706,706,706,446,"you just want it to make noise huh","car truck","truck","child",,,"truck","car truck"
+"A14",39,726,726,726,726,466,"ready for two more","car truck",,,,,"car","car"
+"A14",40,732,732,732,732,472,"michael look at these","ball block car truck","ball block","child","ball block",,"truck",
+"A14",41,735,736,735,735,475,"lets put those away","ball block car truck","car truck","car truck","car truck",,,
+"A14",42,737,737,737,737,477,"lookit whats this whats that","ball block","ball","child","ball",,"ball","ball"
+"A14",43,740,740,740,740,480,"ball thats right your ball","ball","ball","child","block",,"ball","ball"
+"A14",44,742,743,743,743,483,"oh youre gonna look for your thing huh","ball",,"child","block",,"ball","ball"
+"A14",45,784,786,784,784,524,"okay can you put it back in there","ball","ball","child","ball",,"ball","ball"
+"A14",46,786,788,786,786,526,"alright what a basketball player you are","ball",,"child","ball",,"mom",
+"A14",47,791,791,791,791,531,"lets see if you can do it again","ball",,"child",,,"ball","ball"
+"A14",48,792,793,793,793,533,"can you put it in there again","ball","ball","child",,,"ball","ball"
+"A14",49,794,795,794,794,534,"alright youre so good at that michael yeah","ball","ball","child",,,,
+"A14",50,802,803,802,802,542,"one more time","ball",,"child",,,"ball","ball"
+"A14",51,804,804,804,804,544,"alright woooooo","ball",,"child",,,"ball","ball"
+"A14",52,807,807,807,807,547,"can you catch the ball","ball","ball","child","ball",,"mom",
+"A14",53,808,808,808,808,548,"you wanna catch it","ball","ball","child","ball",,"mom",
+"A14",54,812,812,812,812,552,"oh very good","ball",,"child","ball",,"mom",
+"A14",55,818,818,818,818,558,"oops","ball",,"child",,,,
+"A14",56,820,820,820,820,560,"okay mommy will put it back up","ball",,"child",,,"mom",
+"A14",57,822,823,823,823,563,"here mommy will put it up","ball",,,,,,
+"A14",58,825,826,825,825,565,"okay hold out your hands hold out your hands catch go like this","ball",,"child",,,"ball",
+"A14",59,828,829,828,828,568,"go like this","ball",,"child","ball",,"ball",
+"A14",60,832,833,832,832,572,"no","ball",,"child",,,"ball","ball"
+"A14",61,838,838,839,838,578,"whoops try it again","ball",,"child",,,"ball","ball"
+"A14",62,842,843,842,842,582,"alright alright yeah","ball",,"child",,,"mom",
+"A14",63,851,851,851,851,591,"can you throw it to mommy","ball","ball","child",,,"mom","ball"
+"A14",64,852,853,853,853,593,"michael","ball",,"child",,,"ball","ball"
+"A14",65,856,856,857,856,596,"can you throw the ball to mommy","ball","ball","child","ball",,"mom",
+"A14",66,859,859,859,859,599,"can you throw the ball to mommy","ball","ball","child",,,"mom","ball"
+"A14",67,861,861,861,861,601,"oh yeah yeah thats just a wire","ball",,"child",,,"mom","ball"
+"A14",68,864,864,864,864,604,"can you throw the ball to mommy","ball","ball","child",,,,"ball"
+"A14",69,840,872,872,872,612,"you want mommy to put it back up okay","ball",,,,,,"ball"
+"A14",70,872,885,885,885,625,"hey look at this","block","block","child","block",,"block",
+"A14",71,886,887,887,887,627,"theres your block","block","block","child","block",,"block","block"
+"A14",72,889,889,889,889,629,"and it whistles at you","block","block","child","block",,"block","block"
+"A14",73,891,892,891,891,631,"oh okay you wanna play with this dont you","ball block","ball","child","ball",,"ball","block"
+"A14",74,902,902,903,902,642,"where is it wheres the ball",,"ball","child",,,,
+"A14",75,904,905,905,905,645,"wheres the ball there it is","ball","ball","child",,,"ball","ball"
+"A14",76,907,907,907,907,647,"yeah theres the ball","ball","ball","child",,,"mom","ball"
+"A14",77,911,911,911,911,651,"oops","ball",,"child","ball",,,
+"A14",78,914,914,914,914,654,"well lets not take that off",,,,"ball",,,
+"A14",79,928,929,928,928,668,"what are you doing michael",,,"child","ball",,,
+"A14",80,937,937,937,937,677,"oh no the whole thing fell","ball",,"ball",,,"ball",
+"A14",81,940,940,940,940,680,"what are we going to do","ball",,"ball",,,"ball","ball"
+"A14",82,946,946,947,946,686,"what are we going to do about that","ball",,"child",,,"mom","ball"
+"A14",83,890,950,950,950,690,"yeah","ball",,"child",,,"mom","ball"
+"A14",84,953,953,952,953,693,"do you want mommy to put it up","ball",,"child",,,,"ball"
+"A14",85,971,971,971,971,711,"okay okay mommy will put it up one more time okay","ball",,"child",,,,"ball"
+"A14",86,974,974,974,974,714,"but were going to do some other toys now","ball",,,,,,"ball"
+"A14",87,987,988,988,988,728,"okay i think thats all with the ball",,"ball",,"ball",,,
