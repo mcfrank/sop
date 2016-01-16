@@ -42,14 +42,30 @@ theme_set(theme_bw())
 ```{r}
 # This chunk gives the functions used below
 
-kail.fun <- function (i, a, b, c) {
-  a + b * exp(-c * i)
+kail.fun <- function (age, a, b, c) {
+  a + b * exp(-c * age)
 }
+
+get.kail.rts <- function (n.sims, n.ops, age, a, b, c) {
+  lmean <- log(kail.fun(age, a, b, c))
+  rts <- matrix(nrow=n.sims, ncol=n.ops)
+  
+  for (i in 1:n.ops) {
+    rts[,i] <- rlnorm(n.sims, lmean)
+  }
+  
+  return(rowSums(rts))
+}
+
 
 inv.logit <- boot::inv.logit # get inv.logit from boot library
 
-acc.fun <- function(i, alpha, beta) {
-  inv.logit(alpha + beta * i)
+acc.fun <- function(age, alpha, beta) {
+  inv.logit(alpha + beta * age)
+}
+
+get.logit.acc <- function(n.sims, n.ops, age, alpha, beta) {
+  rbinom(n.sims, n.ops, acc.fun(age, alpha, beta)) == n.ops
 }
 ```
 
@@ -123,16 +139,16 @@ We first consider the development of processing speed. Pioneering work by Kail (
 
 $$Y(i) = a + b e^{-ci}$$
 
-Where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. To illustrate this model, we replot the slowing function from @kail1991 in Figure 2, but extend the function into infancy.
+Where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. To illustrate this model, we replot the slowing function from @kail1991 in Figure 2, but extend the function into infancy (with $a = 1$, $b = 5.16$, and $c = .21$).
 
 ```{r}
 a.samp <- 1 # asymptote (s)
 b.samp <- 5.16 # multiplier 
 c.samp <- 0.21 # developmental parmeter
 
-ages <- seq(0,20,.1)
-d <- data.frame(x = ages,
-                y = kail.fun(ages, a = a.samp, b = b.samp, c = c.samp))
+age_years <- seq(0,21,.1)
+d <- data.frame(x = age_years,
+                y = kail.fun(age_years, a = a.samp, b = b.samp, c = c.samp))
 qplot(x, y, geom=c("line"), 
       data=d) + 
   geom_hline(aes(yintercept=1), lty=2) + 
@@ -150,38 +166,53 @@ $$Y(i) = \frac{1}{1 + e^{\alpha + \beta i}}$$
 
 \noindent where $\alpha$ sets the intercept and $\beta$ marks the developmental multiplier, as in a standard logistic regression. 
 
+```{r}
+alpha.samp <- -2
+beta.samp <- .3
+ages_months <- seq(0, 24)
+
+d <- data.frame(x = ages_months,
+                y = inv.logit(alpha.samp + beta.samp * ages_months))
+qplot(x, y, geom=c("line"), 
+      data=d) + 
+  xlab("Age (months)") + 
+  ylab("Accuracy") + 
+  ylim(c(0,1)) + 
+  xlim(c(0,20)) + 
+  ggtitle("Accuracy function")
+```
+
 ## Development of speed and accuracy
 
-So now let's generalize these functions so that we can look at their joint effects on performance.
+So now let's generalize these functions so that we can look at their joint effects on performance, and let's look in infancy.
 
 ```{r, fig.env='figure*'}
-alpha.samp = 2
-beta.samp = .3
+thetas <- c(4,6,8)
+chain.lens <- c(1,2,3)
+n.sims <- 1000
+ages_months <- seq(0, 24, 2)
 
-thetas <- 1:6
-ns <- 1:5
-nsims <- 1000
-ages <- seq(0, 21, .5)
-
-sims <- expand.grid(n = ns, 
-            age = ages,
+sims <- expand.grid(chain.len = chain.lens, 
+            age = ages_months,
             theta = thetas) %>%
-  group_by(n, age, theta) %>%
-  do(data.frame(rt = rlnorm(nsims, 
-                            meanlog = kail.fun(.$age - 1,
-                                               a.samp, b.samp, c.samp))*.$n, 
-                success = rbinom(nsims, .$n, 
-                                 acc.fun(alpha.samp, beta.samp, 
-                                         .$age)) == .$n)) %>%
-  mutate(relevant = rt < theta & success) %>%
-  group_by(n, age, theta) %>%
+  group_by(chain.len, age, theta) %>%
+  do(data.frame(rt = get.kail.rts(n.sims = n.sims, n.ops = .$chain.len, 
+                                  age = .$age/12, 
+                                  a = .5, b = 3, c = .2), 
+                success = get.logit.acc(n.sims = n.sims, n.ops = .$chain.len, 
+                                         age = .$age, 
+                                         alpha = -2, beta = .3))) %>%
+  mutate(relevant = rt < theta & success)
+
+ms <- sims %>%
+  group_by(chain.len, age, theta) %>%
   summarise(p = mean(relevant)) %>%
   mutate(theta = factor(as.character(paste0("theta=",as.character(theta)))))
   
-ggplot(sims, aes(x = age, y = p, col = factor(n))) + 
+ggplot(ms, aes(x = age, y = p, col = factor(chain.len))) + 
   geom_line() + 
   facet_wrap(~theta) +
-  geom_dl(aes(label = factor(n)), method = "last.qp") + 
+  geom_dl(aes(label = factor(chain.len)), method = "last.qp") + 
   scale_colour_solarized(guide=FALSE) + 
   ylab("Probability of successful chain") + 
   xlab("Age (months)") + 
@@ -207,77 +238,90 @@ We focus here on learning a word that is presented ostensively via a social cue 
 Let's begin by attempting to estimate developmental changes in the speed of processing a word. Of course there are many factors involved, including the frequency and general familiarity of the word. But the literature on infants' early language processing generally attempts to select simple, easy words that should be accessible to almost all children, so we can use this literature to get a rough-and-ready estimate of declines in reaction time across ages. 
 
 ```{r}
-d <- read.csv("../data/word_recognition_MA.csv") %>%
+d.wr <- read.csv("../data/word_recognition_MA.csv") %>%
     mutate(age_years = mean_age_1 / 365) 
 
-d.kid <- d %>% 
+d.wr.kid <- d.wr %>% 
   filter(age_years < 5) %>%
   mutate(weight = 1/n_1)
-d.adult <- d %>% 
-  filter(age_years > 20) %>% 
-  summarise(rt = mean(x_1, na.rm=TRUE))
 
-ggplot(d.kid, aes(x = age_years, y = x_1)) + 
-  geom_point(aes(size = n_1, col = short_cite), 
-             position=position_dodge(width=.05)) + 
-#   geom_linerange(aes(ymin = rt - cih, 
-#                      ymax = rt + cil, 
-#                      col = study), 
-#                  position=position_dodge(width=.05)) +
-  geom_smooth(aes(weight = weight), 
-              method="lm", formula=y ~ log(x), 
-              col="black", lty=3) + 
-  geom_hline(aes(yintercept=d.adult$rt), lty=2) +  
-  ylim(c(0,2)) + 
-  xlim(c(0,5)) + 
-  xlab("Age (years)") + 
-  ylab("Reaction Time (s)")
+d.wr.adult <- d.wr %>% 
+  filter(age_years > 20) %>% 
+  summarise(rt = mean(x_1, na.rm=TRUE), 
+            acc = mean(accuracy))
 ```
 
-Now fit a Kail curve to these data. Note that this is a simpler analysis - we're not fitting multipliers on the slope of a mental-rotation function, we're just fitting multipliers on the actual adult RT. The Kail curve looks almost identical to the log curve we fit to the kid data - although this is partially just that they are both exponential function fits, the asymptote didn't have to be the same (e.g., didn't have to be the adult RT). 
+Now fit a Kail curve to these data. 
+
+Note that this is a simpler analysis - we're not fitting multipliers on the slope of a mental-rotation function, we're just fitting multipliers on the actual adult RT. The Kail curve looks almost identical to the log curve we fit to the kid data - although this is partially just that they are both exponential function fits, the asymptote didn't have to be the same (e.g., didn't have to be the adult RT). 
 
 ```{r}
-adult.rt <- d.adult$rt
-a = .55
+adult.rt <- d.wr.adult$rt
 
-fn <- function(x, a = .55) {
+kail.mse <- function(x) {
   b = x[1]
   c = x[2]
-  df <- d.kid
-  df$pred <- a + b * exp(-c * df$age)
-  err <- mean((df$rt - df$pred)^2)
+  pred <- kail.fun(d.wr.kid$age_years, adult.rt, b, c)
+  err <- mean((d.wr.kid$x_1 - pred)^2) # * d.wr.kid$weight)
   return(err)
 }
 
-opt <- optim(c(1,1.5), fn, adult.rt)
+opt <- optim(c(1,1.5), kail.mse)
+```
 
-d.kid$pred <- .55 + opt$par[1] * exp(-opt$par[2] * d.kid$age)
+```{r}
+# (Using $1/n$ as the weighting term on the error, like a weighted least-squares). 
+# we're not weighting because it broke the half-logit
 
-xs <- seq(0,5,.1)
-d.pred <- data.frame(x = xs,
-                     y = a + opt$par[1] * exp(-opt$par[2] * xs))
+d.wr.kid$pred <- kail.fun(d.wr.kid$age_years, a = adult.rt, b = opt$par[1], c = opt$par[2])
 
-ggplot(d.kid, aes(x = age, y = rt)) + 
-  geom_point(aes(size = n, col = study), 
-             position=position_dodge(width=.05)) + 
-  geom_linerange(aes(ymin = rt - cih, 
-                     ymax = rt + cil, 
-                     col = study), 
-                 position=position_dodge(width=.05)) +
-  geom_hline(aes(yintercept=adult.rt), lty=2) +  
-  geom_line(data=d.pred, aes(x = x, y = y), col="red", lty=3) +
-  geom_smooth(aes(weight = weight), 
-              method="lm", formula=y ~ log(x), 
-              col="black", lty=3) + 
+d_pred <- data.frame(age_years = seq(0,5,.1),
+                     rt_pred = adult.rt + opt$par[1] * exp(-opt$par[2] * xs))
+
+ggplot(d.wr.kid, aes(x = age_years, y = x_1)) + 
+  geom_point(aes(size = n_1, col = short_cite)) + 
+  geom_hline(aes(yintercept=adult.rt), lty=3) +  
+  geom_line(data=d_pred, aes(x = age_years, y = rt_pred), col="black", lty=2) +
+#   geom_smooth(aes(weight = weight), 
+#               method="lm", formula=y ~ log(x), 
+#               col="black", lty=3) + 
   ylim(c(0,2)) + 
   xlim(c(0,5)) + 
   xlab("Age (years)") + 
   ylab("Reaction Time (s)")
 ```
 
-a = `r opt$par[1]` and b = `r opt$par[2]`
+$a = `r adult.rt`$, $b = `r opt$par[1]`$, and $c = `r opt$par[2]`$
+
+Accuracy. 
+
+```{r}
+acc.wr.mod <- glm(accuracy ~ age_years, #weights = weight, 
+                  family = binomial(psyphy::mafc.logit(2)),
+                  data = d.wr.kid)
+
+d_pred$acc_pred <- predict(acc.wr.mod, newdata = d_pred, type = "response")
+
+ggplot(d.wr.kid, aes(x = age_years, y = accuracy)) + 
+  geom_point(aes(size = n_1, col = short_cite)) + 
+  geom_line(data = d_pred, aes(x = age_years, y = acc_pred), 
+            lty = 2) + 
+#   geom_smooth(aes(weight = weight), 
+#               method="lm", formula = y ~ boot::inv.logit(x),
+#               col="black", lty=2) + 
+  geom_hline(yintercept=.5, lty=3) +  
+  ylim(c(0,1)) + 
+  xlim(c(0,5)) + 
+  xlab("Age (years)") + 
+  ylab("Accuracy")
+```
+
 
 ## Gaze following
+
+```{r}
+d.gf <- read.csv("data/"
+```
 
 
 ## Estimating the speed of reference
