@@ -36,18 +36,25 @@ library(ggplot2)
 library(dplyr)
 library(langcog)
 library(directlabels)
+library(stringr)
+library(magrittr)
+library(readr)
 theme_set(theme_bw())
 ```
 
-```{r}
-# This chunk gives the functions used below
+```{r helper_functions}
+### this chunk gives the functions used below ###
+inv_logit <- boot::inv.logit # get inv_logit from boot library
 
-kail.fun <- function (age, a, b, c) {
+## compute Kail exponential
+# a is the adult state, b is the age multiplier, and 
+kail_fun <- function (age, a, b, c) {
   a + b * exp(-c * age)
 }
 
-get.kail.rts <- function (n.sims, n.ops, age, a, b, c) {
-  lmean <- log(kail.fun(age, a, b, c))
+## simulation function to get lognormal RTs based on Kail function
+get_kail_rts <- function (n.sims, n.ops = 1, age, a, b, c) {
+lmean <- log(kail_fun(age, a, b, c))
   rts <- matrix(nrow=n.sims, ncol=n.ops)
   
   for (i in 1:n.ops) {
@@ -57,15 +64,29 @@ get.kail.rts <- function (n.sims, n.ops, age, a, b, c) {
   return(rowSums(rts))
 }
 
-
-inv.logit <- boot::inv.logit # get inv.logit from boot library
-
-acc.fun <- function(age, alpha, beta) {
-  inv.logit(alpha + beta * age)
+## mean squared error function for Kail curves
+## designed for optim
+kail_mse <- function(x, a, age, dv) {
+  b <- x[1]
+  c <- x[2]
+  pred <- kail_fun(age, a, b, c)
+  err <- mean((dv - pred)^2, na.rm=TRUE) # * d.wr.kid$weight)
+  return(err)
 }
 
-get.logit.acc <- function(n.sims, n.ops, age, alpha, beta) {
-  rbinom(n.sims, n.ops, acc.fun(age, alpha, beta)) == n.ops
+## accuracy function (logistic)
+acc_fun <- function(age, alpha, beta) {
+  inv_logit(alpha + beta * age)
+}
+
+## simulation function for logit 
+get_logit_acc <- function(n.sims, n.ops = 1, age, alpha, beta) {
+  rbinom(n.sims, n.ops, acc_fun(age, alpha, beta)) == n.ops
+}
+
+## simulation function for theta
+get_thetas <- function(n.sims, theta, iota = 1) {
+  rlnorm(n.sims, meanlog = theta, sdlog = iota)
 }
 ```
 
@@ -148,7 +169,7 @@ c.samp <- 0.21 # developmental parmeter
 
 age_years <- seq(0,21,.1)
 d <- data.frame(x = age_years,
-                y = kail.fun(age_years, a = a.samp, b = b.samp, c = c.samp))
+                y = kail_fun(age_years, a = a.samp, b = b.samp, c = c.samp))
 qplot(x, y, geom=c("line"), 
       data=d) + 
   geom_hline(aes(yintercept=1), lty=2) + 
@@ -172,7 +193,7 @@ beta.samp <- .3
 ages_months <- seq(0, 24)
 
 d <- data.frame(x = ages_months,
-                y = inv.logit(alpha.samp + beta.samp * ages_months))
+                y = inv_logit(alpha.samp + beta.samp * ages_months))
 qplot(x, y, geom=c("line"), 
       data=d) + 
   xlab("Age (months)") + 
@@ -196,13 +217,14 @@ sims <- expand.grid(chain.len = chain.lens,
             age = ages_months,
             theta = thetas) %>%
   group_by(chain.len, age, theta) %>%
-  do(data.frame(rt = get.kail.rts(n.sims = n.sims, n.ops = .$chain.len, 
+  do(data.frame(rt = get_kail_rts(n.sims = n.sims, n.ops = .$chain.len, 
                                   age = .$age/12, 
                                   a = .5, b = 3, c = .2), 
-                success = get.logit.acc(n.sims = n.sims, n.ops = .$chain.len, 
+                success = get_logit_acc(n.sims = n.sims, n.ops = .$chain.len, 
                                          age = .$age, 
-                                         alpha = -2, beta = .3))) %>%
-  mutate(relevant = rt < theta & success)
+                                         alpha = -2, beta = .3),
+                thetas = get_thetas(n.sims = n.sims, theta = .$theta))) %>%
+  mutate(relevant = rt < thetas & success)
 
 ms <- sims %>%
   group_by(chain.len, age, theta) %>%
@@ -238,14 +260,14 @@ We focus here on learning a word that is presented ostensively via a social cue 
 Let's begin by attempting to estimate developmental changes in the speed of processing a word. Of course there are many factors involved, including the frequency and general familiarity of the word. But the literature on infants' early language processing generally attempts to select simple, easy words that should be accessible to almost all children, so we can use this literature to get a rough-and-ready estimate of declines in reaction time across ages. 
 
 ```{r}
-d.wr <- read.csv("../data/word_recognition_MA.csv") %>%
+d_wr <- read.csv("../data/word_recognition_MA.csv") %>%
     mutate(age_years = mean_age_1 / 365) 
 
-d.wr.kid <- d.wr %>% 
+d_wr_kid <- d_wr %>% 
   filter(age_years < 5) %>%
   mutate(weight = 1/n_1)
 
-d.wr.adult <- d.wr %>% 
+d_wr_adult <- d_wr %>% 
   filter(age_years > 20) %>% 
   summarise(rt = mean(x_1, na.rm=TRUE), 
             acc = mean(accuracy))
@@ -256,59 +278,50 @@ Now fit a Kail curve to these data.
 Note that this is a simpler analysis - we're not fitting multipliers on the slope of a mental-rotation function, we're just fitting multipliers on the actual adult RT. The Kail curve looks almost identical to the log curve we fit to the kid data - although this is partially just that they are both exponential function fits, the asymptote didn't have to be the same (e.g., didn't have to be the adult RT). 
 
 ```{r}
-adult.rt <- d.wr.adult$rt
+# should be using $1/n$ as the weighting term on the error, like a weighted least-squares, but we're not weighting right now because it broke the half-logit in accuracy
 
-kail.mse <- function(x) {
-  b = x[1]
-  c = x[2]
-  pred <- kail.fun(d.wr.kid$age_years, adult.rt, b, c)
-  err <- mean((d.wr.kid$x_1 - pred)^2) # * d.wr.kid$weight)
-  return(err)
-}
+adult_wr_rt <- d_wr_adult$rt
 
-opt <- optim(c(1,1.5), kail.mse)
-```
+wr_opt <- optim(par = c(1, 1.5), 
+             function (x) {kail_mse(x, adult_wr_rt, 
+                                    d_wr_kid$age_years, d_wr_kid$x_1)})
 
-```{r}
-# (Using $1/n$ as the weighting term on the error, like a weighted least-squares). 
-# we're not weighting because it broke the half-logit
 
-d.wr.kid$pred <- kail.fun(d.wr.kid$age_years, a = adult.rt, b = opt$par[1], c = opt$par[2])
+d_wr_pred <- data.frame(age_years = seq(0,5,.1), 
+                        pred = kail_fun(seq(0,5,.1), 
+                          a = adult_wr_rt, b = wr_opt$par[1], c = wr_opt$par[2]))
 
-d_pred <- data.frame(age_years = seq(0,5,.1),
-                     rt_pred = adult.rt + opt$par[1] * exp(-opt$par[2] * xs))
-
-ggplot(d.wr.kid, aes(x = age_years, y = x_1)) + 
+ggplot(d_wr_kid, aes(x = age_years, y = x_1)) + 
   geom_point(aes(size = n_1, col = short_cite)) + 
-  geom_hline(aes(yintercept=adult.rt), lty=3) +  
-  geom_line(data=d_pred, aes(x = age_years, y = rt_pred), col="black", lty=2) +
-#   geom_smooth(aes(weight = weight), 
-#               method="lm", formula=y ~ log(x), 
-#               col="black", lty=3) + 
+  geom_hline(aes(yintercept=adult_wr_rt), lty=3) +  
+  geom_line(data = d_wr_pred, aes(x = age_years, y = pred), col="black", lty=2) +
   ylim(c(0,2)) + 
   xlim(c(0,5)) + 
   xlab("Age (years)") + 
-  ylab("Reaction Time (s)")
+  ylab("Reaction Time (s)") + 
+  scale_colour_solarized(name=NULL) + 
+  scale_size_area(name="N") + 
+  guides(colour = guide_legend(nrow = 4)) + 
+  theme(legend.text=element_text(size=8), 
+        legend.position = "bottom")
+
 ```
 
-$a = `r adult.rt`$, $b = `r opt$par[1]`$, and $c = `r opt$par[2]`$
+$a = `r adult_wr_rt`$, $b = `r wr_opt$par[1]`$, and $c = `r wr_opt$par[2]`$
 
 Accuracy. 
 
 ```{r}
-acc.wr.mod <- glm(accuracy ~ age_years, #weights = weight, 
+acc_wr_mod <- glm(accuracy ~ age_years, #weights = weight, 
                   family = binomial(psyphy::mafc.logit(2)),
-                  data = d.wr.kid)
+                  data = d_wr_kid)
 
-d_pred$acc_pred <- predict(acc.wr.mod, newdata = d_pred, type = "response")
+d_wr_pred$acc_pred <- predict(acc_wr_mod, newdata = d_wr_pred, type = "response")
 
-ggplot(d.wr.kid, aes(x = age_years, y = accuracy)) + 
+ggplot(d_wr_kid, aes(x = age_years, y = accuracy)) + 
   geom_point(aes(size = n_1, col = short_cite)) + 
-  geom_line(data = d_pred, aes(x = age_years, y = acc_pred), 
+  geom_line(data = d_wr_pred, aes(x = age_years, y = acc_pred), 
             lty = 2) + 
-#   geom_smooth(aes(weight = weight), 
-#               method="lm", formula = y ~ boot::inv.logit(x),
-#               col="black", lty=2) + 
   geom_hline(yintercept=.5, lty=3) +  
   ylim(c(0,1)) + 
   xlim(c(0,5)) + 
@@ -319,17 +332,64 @@ ggplot(d.wr.kid, aes(x = age_years, y = accuracy)) +
 
 ## Gaze following
 
+Adult RT is roughly 380ms from the SOA = 0 control task reported [here](http://gustavkuhn.com/VisualCognition/Publications_by_topic_files/Kuhn--Experimental%20Brain%20Research.pdf)
+
 ```{r}
-d.gf <- read.csv("data/"
+d_gf <- read.csv("../data/gaze_following_MA.csv") %>%
+  mutate(age_years = mean_age_1/365, 
+         pointing = str_detect(cue_type, "pointing"))
+
+adult_gf_rt <- .38
+
+gf_opt <- optim(par = c(1, 1), 
+                method = "L-BFGS-B", 
+                function (x) {kail_mse(x, adult_gf_rt, 
+                                       d_gf$age_years, d_gf$m_rt_seconds)}, 
+                lower = c(0, .2), upper = c(5, .4))
+
+d_gf_pred <- data_frame(age_years = seq(0,5,.1), 
+                        pred = kail_fun(seq(0,5,.1), 
+                                        a = adult_gf_rt, 
+                                        b = gf_opt$par[1], 
+                                        c = gf_opt$par[2]))
+
+ggplot(d_gf, aes(x = age_years, y = m_rt_seconds)) + 
+  geom_point(aes(size = n_1, col = short_cite)) + 
+  geom_hline(aes(yintercept=adult_gf_rt), lty=3) +  
+  geom_line(data = d_gf_pred, 
+            aes(x = age_years, y = pred), col="black", lty=2) +
+  xlim(c(0,5)) + 
+  ylim(c(0,5)) + 
+  xlab("Age (years)") + 
+  ylab("Reaction Time (s)")
 ```
 
+Accuracy. 
+
+```{r}
+acc_gf_mod <- glm(x_1 ~ age_years * pointing, #weights = 1/n_1, 
+                  family = "binomial",
+                  data = d_gf)
+
+d_gf_pred$pointing <- c(rep(c(TRUE,FALSE), nrow(d_gf_pred)/2), TRUE)
+d_gf_pred$acc_pred <- predict(acc_gf_mod, newdata = d_gf_pred, type = "response")
+
+ggplot(d_gf, aes(x = age_years, y = x_1)) + 
+  geom_point(aes(size = n_1, col = pointing)) + 
+  geom_line(data = d_gf_pred, aes(x = age_years, y = acc_pred, col = pointing), 
+            lty = 2) + 
+  # geom_hline(yintercept=.5, lty=3) +  
+  ylim(c(0,1)) + 
+  xlim(c(0,5)) + 
+  xlab("Age (years)") + 
+  ylab("Accuracy")
+```
 
 ## Estimating the speed of reference
 
 Our next task is to extract a plausible value for $\theta$, the speed at which refential utterances must be processed  This number is quite subjective; it's not immediately clear when information would become inaccessible. Perhaps for momentary cues like referential gaze, if 
 
 ```{r}
-library(readr)
 filepath <- "../data/FM/data/"
 files <- dir(path = filepath, pattern = "*.csv")
 
@@ -342,9 +402,6 @@ for (f in files) {
 As an approximation, we measure the time between utterances with referential content in child-directed speech. We use the Fernald and Morikawa corpus [@fernald1993, @frank2013], as annotated for the approximate time of each utterance by [@rohde2015]. This corpus contains `r length(unique(fm$video))` annotated videos of interactions between children and their caregivers playing with toys at home. 
 
 ```{r}
-library(stringr)
-library(magrittr)
-
 fm %<>%
   rowwise %>%
   mutate(referential_gaze = mom.eyes %in% objects.referred)
@@ -352,9 +409,31 @@ fm %<>%
 fm %<>% 
   group_by(video) %>%
   mutate(dt = c(diff(time.agg.adj),0))
+```
 
-# qplot(dt, facets = ~ referential_gaze, data = fm)
+Times are no different between referential and non-referential utterances.
 
+Taken as a whole, nicely, this is a perfect lognormal distribution. 
+
+```{r}
+log_norm_fun <- function(x) { 
+             d <- hist(fm$dt[fm$dt > 0], plot = FALSE, 
+                             breaks = 0:max(fm$dt))$density
+             p <- dlnorm((0:(max(fm$dt)-1))+.5, 
+                                  meanlog = x[1], sdlog = x[2])
+             return(sum((d - p)^2))
+           }
+
+lnorm_pars <- optim(par = c(1, 1.5), fn = log_norm_fun)
+             
+ggplot(filter(fm, dt >= 0), 
+       aes(x = dt)) + 
+  geom_histogram(aes(y = ..density..), binwidth = 1) + 
+  stat_function(fun = dlnorm, args = list(meanlog = lnorm_pars$par[1], 
+                                          sdlog = lnorm_pars$par[2]), col = "red")
+```
+
+```{r}
 means <- fm %>%
   group_by(video, referential_gaze) %>%
   summarise(mean = mean(dt), 
@@ -379,36 +458,58 @@ In sum, this analysis suggests that we take $\theta \approx 2.5$ as a starting p
 # Simulation
 
 ```{r}
-thetas <- 2.5
-ns <- 2
-nsims <- 10000
-ages <- seq(0, 36, 1)
+nsims <- 100000
+ages <- seq(0, 5, .1)
 
-sims <- expand.grid(n = ns, 
-            age = ages,
-            theta = thetas) %>%
-  group_by(n, age, theta) %>%
-  do(data.frame(rt = rlnorm(nsims, meanlog = rt.multiplier(.$age - 1,
-                                                           a = .55, 
-                                                           b = opt$par[1],
-                                                           c = opt$par[2]))*.$n, 
-                success = rbinom(nsims, .$n, accuracy(.$age, 
-                                                      a = -2, 
-                                                      b = .4)) == .$n)) %>%
-  mutate(relevant = rt < theta & success) %>%
-  group_by(n, age, theta) %>%
-  summarise(p = mean(relevant)) %>%
-  mutate(theta = factor(as.character(paste0("theta=",as.character(theta)))))
+sims <- expand.grid(age = ages) %>%
+  group_by(age) %>%
+  do(data.frame(rt = get_kail_rts(n.sims = n.sims, 
+                                  age = .$age,
+                                  a = adult_wr_rt,
+                                  b = wr_opt$par[1],
+                                  c = wr_opt$par[2]) + 
+                  get_kail_rts(n.sims = n.sims, 
+                               age = .$age,
+                               a = adult_gf_rt,
+                               b = gf_opt$par[1],
+                               c = gf_opt$par[2]),
+                acc = and(get_logit_acc(n.sims = n.sims,  
+                                  age = .$age, 
+                                  alpha = coef(acc_wr_mod)[1], 
+                                  beta = coef(acc_wr_mod)[2]), 
+                    get_logit_acc(n.sims = n.sims,  
+                                  age = .$age, 
+                                  alpha = coef(acc_gf_mod)[1], 
+                                  beta = coef(acc_gf_mod)[2])), 
+                theta = get_thetas(n.sims = n.sims, 
+                                    theta = lnorm_pars$par[1], 
+                                    iota = lnorm_pars$par[2]))) %>%
+     mutate(relevant = rt < theta & acc == TRUE)
+
+
+ms <- sims %>%
+  group_by(age) %>%
+  summarise(p = mean(relevant)) 
   
-ggplot(sims, aes(x = age, y = p, col = factor(n))) + 
+ggplot(ms, aes(x = age, y = p)) + 
   geom_line() + 
-  facet_wrap(~theta) +
-  # geom_hline(yintercept = .5, lty = 2) + 
-  geom_dl(aes(label = factor(n)), method = "last.qp") + 
   scale_colour_solarized(guide=FALSE) + 
-  ylab("Proportion of learning instances used") + 
+  ylab("Probability of successful chain") + 
   xlab("Age (months)") + 
   ylim(c(0,1))
+```
+
+How many learning instances does this entail?
+
+```{r}
+ggplot(ms, aes(x = age, y = 1/p)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE) + 
+  scale_colour_solarized(guide=FALSE) + 
+  ylab("Number of learning instances needed for \"fast mapping\"") + 
+  xlab("Age (months)") + 
+  scale_y_log10(limits = c(1,1000)) + 
+  geom_hline(yintercept = 1, lty = 3)
 ```
 
 #  Discussion
