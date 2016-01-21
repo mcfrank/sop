@@ -99,7 +99,7 @@ Some empirical data supports this second viewpoint---continuity with severe perf
 
 We suggest instead that continuous developmental processes---increases in speed and accuracy---might be responsible. We pursue this suggestion by creating a performance model for early word-object mapping. Our starting point is the idea that even the simplest word learning input for object referents involves following some kind of attentional cue (e.g., gaze or pointing) to a distal target and the processing some kind of link between a word and the target referent. Each of these abilities has been shown to develop dramatically over the first two years and beyond. Thus, it stands to reason that any achievement that depends on _both_ should develop even more dramatically in the same period. 
 
-Our goal is to create a quantitative model that allows us to formalize this intuiton. Inspired by recent meta-analysess of developmental phenomena [e.g., @cristia2015; @tsuji2014], we conduct systematic literature reviews of the literature on gaze [following @scaife1975] and word recognition [following @fernald1998]. These meta-analytic surveys, in combination with parametric models of developent [e.g., @kail1991] allow us to estimate the speed and accuracy for a two-component model of word learning. 
+Our goal is to create a quantitative model that allows us to formalize this intuiton. Inspired by recent meta-analysess of developmental phenomena [e.g., @cristia2014; @tsuji2014], we conduct systematic literature reviews of the literature on gaze [following @scaife1975] and word recognition [following @fernald1998]. These meta-analytic surveys, in combination with parametric models of developent [e.g., @kail1991] allow us to estimate the speed and accuracy for a two-component model of word learning. 
 
 The outline of the paper is as follows. We begin by describing the basic model and how it shows developmental changes. We then estimate the development of speed and accuracy independently for gaze following and word recognition. We then estimate the pace of referential utterances from a corpus, and compute children's predicted learning rate based on these parameter estimates. The conclusion of our analysis is that even if young infants were trying to learn in precisely the same way as older toddlers, they would be too slow and too falible to extract much signal from their input data.   
 
@@ -117,11 +117,12 @@ We also associate a time to completion with each operation. We assume that these
 
 $$RT(s_p) \sim exp(N(\mu,\sigma))$$
 
-The arithmetic mean of a lognormal is $e^{\mu + \sigma^2/2}$. Unfortunately, there is not a known parametric form for the sum of multiple lognormals. A variety of analytic approximations for these sums exist [@fenton1960], but they have some limitatios. I will use a numerical simulation approach here for simplicity. 
+\noindent The arithmetic mean of a lognormal is $e^{\mu + \sigma^2/2}$. Unfortunately, there is not a known parametric form for the sum of multiple lognormals. A variety of analytic approximations for these sums exist [@fenton1960], but they have some limitations, so instead we use numerical simulations here for simplicity.\footnote{All code and data for this project are available at [http://github.com/mcfrank/sop]().}
 
-Imagine a time-sensitive operation with a temporal threshold $\theta$ such that if the operations are not completed within this threhold, then there is no possibility of learning. Via simulation, we can approximate the probability that a chain is successful within the appropriate time period for learning. For siplicity, we assume a standard lognormal with $\mu = 0$, $\sigma = 1$.
+Imagine a time-sensitive operation with a temporal threshold sampled from a lognormal with mean $\theta$ and standard deviation $\iota$, such that if the operations are not completed within this threhold, then there is no possibility of learning. Think of these as opportunities for successfully learning or for successfully completing the behavior. 
 
-```{r}
+
+```{r fig.cap="Probability p of successsfully executing a chain of operations with $n$ steps, plotted by the probability of success $s$. Facets show diferent temporal thresholds $\theta$."}
 thetas <- seq(1, 6)
 ns <- 1:5
 ss <- seq(.3,.9,.1)
@@ -132,7 +133,8 @@ sims <- expand.grid(n = ns,
             theta = thetas) %>%
   group_by(n, s, theta) %>%
   do(data.frame(rt = rlnorm(nsims, meanlog = 0, sdlog = 1)*.$n, 
-                success = rbinom(nsims, .$n, .$s) == .$n)) %>%
+                success = rbinom(nsims, .$n, .$s) == .$n,
+                this_theta = get_thetas(nsims, theta = .$theta))) %>%
   mutate(relevant = rt < theta & success) %>%
   group_by(n, s, theta) %>%
   summarise(p = mean(relevant)) %>%
@@ -144,74 +146,70 @@ ggplot(sims, aes(x = n, y = p, col = factor(s))) +
   facet_wrap(~theta) + 
   scale_colour_solarized(guide=FALSE) + 
   geom_dl(aes(label = s), method = "first.qp") + 
-  xlim(c(min(ns)-1, max(ns)))
+  xlim(c(min(ns)-1, max(ns)+1))
 ```
 
-Figure 1. Probability p of successsfully executing a chain of operations with $n$ steps, plotted by the probability of success $s$. Facets show diferent temporal thresholds $\theta$.
-
-The simulations in Figure 1 show a simple result: long chains of operations are unlikely to succeed unless individual operations are very fast and very accurate. Even assuming the median time to execution for a single step is 1s ($e^{\mu}=1$), successful and timely execution of multi-step sequences is very unlikely within a reasonable time frame. For example, with a cutoff of $\theta = 6s$, chains of length 3 were only successful half the time if each separate sub-action was extremely likely to succeed ($s > .9$). At shorter values of $\theta$, virtually no chains of length 3 were successful.
-
-Of course, to be meaningful, these simulations require estimates for the values of $\mu$, $\sigma$, $n$, $s$, and $\theta$.
+Via simulation, we can now approximate the probability that a chain is successful within a particular threshold. A representative set of simulations are shown in Figure 1. For these and many other parameter settings, long chains of operations are unlikely to succeed unless individual operations are very fast and very accurate. Even assuming the median time to execution for a single step is 1s ($e^{\mu}=1$), successful and timely execution of multi-step sequences is very unlikely within a reasonable time frame. For example, with threshold $\theta = 6$, chains of length 3 were only successful even half the time if each separate sub-action was extremely likely to succeed ($s > .9$). At shorter values of $\theta$, virtually no chains of length 3 were successful. Of course, to be meaningful, these simulations require estimates for the values of $n$ for the particular chain; $\mu$ and $\sigma$ for the speed of each suboperation; $s$ for the accuracy of each suboperation; and$\theta$ and $\iota$ for the temporal distribution of opportunities for the behavior.
 
 ## Development within the model
 
-The two posited capacities in our model are speed and accuracy. It seems clear that, for an individual cognitive operation or set of operations, both of these should change dramatically across development. How does developmental change look for these abilities? 
+The two posited capacities in our model are speed and accuracy. Both of these should change across development for any constituent cognitive operation, leading to dramatic changes in the cumulative speed and accuracy of chains of operations across development. To estimate these changes, we use parametric models of developmental change, beginning with processing speed. 
 
-We first consider the development of processing speed. Pioneering work by Kail (see e.g., [-@kail1991]) describes the developmental trajectory of reaction times for individual tasks. He notes that empirically, the slope of these reaction times follows an exponential, such that
+Pioneering work by Kail (see e.g., [-@kail1991]) describes the developmental trajectory of reaction times for complex tasks, via aggregation across the published literature.^[We will refer to this technique throughout as "meta-analysis" though technically the term might also be used appropriately only for those analyses that use classic techniques for cross-experiment weighting [@hedges2014].] He notes that empirically, the slope of these reaction times follows an exponential, such that
 
-$$Y(i) = a + b e^{-ci}$$
+$$Y(i) = a + b e^{-ci},$$
 
-Where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. To illustrate this model, we replot the slowing function from @kail1991 in Figure 2, but extend the function into infancy (with $a = 1$, $b = 5.16$, and $c = .21$).
+\noindent where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. The [@kail1991] model is a model of RT multipliers. Since operations are additive, these multipliers should apply to individual operations or to chains of operations equivalently: if the multiplier is constant then it can be factored out. 
 
 ```{r}
-a.samp <- 1 # asymptote (s)
-b.samp <- 5.16 # multiplier 
-c.samp <- 0.21 # developmental parmeter
+# To illustrate this model, we replot the slowing function from @kail1991 in Figure 2, but extend the function into infancy (with $a = 1$, $b = 5.16$, and $c = .21$).
 
-age_years <- seq(0,21,.1)
-d <- data.frame(x = age_years,
-                y = kail_fun(age_years, a = a.samp, b = b.samp, c = c.samp))
-qplot(x, y, geom=c("line"), 
-      data=d) + 
-  geom_hline(aes(yintercept=1), lty=2) + 
-  xlab("Age (years)") + 
-  ylab("Slope (sec)") + 
-  ylim(c(0,6)) + 
-  xlim(c(0,20)) 
+# a.samp <- 1 # asymptote (s)
+# b.samp <- 5.16 # multiplier 
+# c.samp <- 0.21 # developmental parmeter
+# 
+# age_years <- seq(0,21,.1)
+# d <- data.frame(x = age_years,
+#                 y = kail_fun(age_years, a = a.samp, b = b.samp, c = c.samp))
+# qplot(x, y, geom=c("line"), 
+#       data=d) + 
+#   geom_hline(aes(yintercept=1), lty=2) + 
+#   xlab("Age (years)") + 
+#   ylab("Slope (sec)") + 
+#   ylim(c(0,6)) + 
+#   xlim(c(0,20)) 
 ```
 
-The [@kail1991] model is a model of RT multipliers. Since operations are additive, these multipliers should apply to individual operations or to chains of operations equivalently: if the multiplier is constant then it can be factored out. 
+Next we turn to accuracy. For simplicity, we consider the probability of success on a single operation changing across time as a simple logistic function:
 
-For simplicity, we consider the probability of success on a single operation changing across time as a logistic. This function is constrained to be 0 at infancy (but see e.g., [@hidaka2013] for a more sophisticated approach to learning curves):
-
-$$Y(i) = \frac{1}{1 + e^{\alpha + \beta i}}$$
+$$Y(i) = \frac{1}{1 + e^{\alpha + \beta i}},$$
 
 \noindent where $\alpha$ sets the intercept and $\beta$ marks the developmental multiplier, as in a standard logistic regression. 
 
 ```{r}
-alpha.samp <- -2
-beta.samp <- .3
-ages_months <- seq(0, 24)
+# alpha.samp <- -2
+# beta.samp <- .3
 
-d <- data.frame(x = ages_months,
-                y = inv_logit(alpha.samp + beta.samp * ages_months))
-qplot(x, y, geom=c("line"), 
-      data=d) + 
-  xlab("Age (months)") + 
-  ylab("Accuracy") + 
-  ylim(c(0,1)) + 
-  xlim(c(0,20)) + 
-  ggtitle("Accuracy function")
+# ages_months <- seq(0, 24)
+# 
+# d <- data.frame(x = ages_months,
+#                 y = inv_logit(alpha.samp + beta.samp * ages_months))
+# qplot(x, y, geom=c("line"), 
+#       data=d) + 
+#   xlab("Age (months)") + 
+#   ylab("Accuracy") + 
+#   ylim(c(0,1)) + 
+#   xlim(c(0,20)) + 
+#   ggtitle("Accuracy function")
 ```
 
 ## Development of speed and accuracy
 
-So now let's generalize these functions so that we can look at their joint effects on performance, and let's look in infancy.
+```{r, fig.cap="Probability of success for one set of developmental parameters. Different colored lines indicate chains of differing lengths, panels show different values of $\theta$."}
 
-```{r, fig.env='figure*'}
-thetas <- c(4,6,8)
+thetas <- c(2,4,6)
 chain.lens <- c(1,2,3)
-n.sims <- 1000
+n.sims <- 10000
 ages_months <- seq(0, 24, 2)
 
 sims <- expand.grid(chain.len = chain.lens, 
@@ -220,7 +218,7 @@ sims <- expand.grid(chain.len = chain.lens,
   group_by(chain.len, age, theta) %>%
   do(data.frame(rt = get_kail_rts(n.sims = n.sims, n.ops = .$chain.len, 
                                   age = .$age/12, 
-                                  a = .5, b = 3, c = .2), 
+                                  a = 1, b = 5.16, c = .21), 
                 success = get_logit_acc(n.sims = n.sims, n.ops = .$chain.len, 
                                          age = .$age, 
                                          alpha = -2, beta = .3),
@@ -242,17 +240,13 @@ ggplot(ms, aes(x = age, y = p, col = factor(chain.len))) +
   ylim(c(0,1))
 ```
 
-Figure 3. Probability of success for one set of developmental parameters. Different colored lines indicate chains of differing lengths, panels slow 
+In the next set of simulations, we combine these functions with the basic operation chain simulations defined above and examine the probability of a successful chain of operations. Results for one parameter set are shown in Figure 2. These simulations show that sharp develomental transitions between failure and success can be the product of relatively broad underlying functions. *TODO: ADD SOME INTUTION FOR PARAMETERS*
 
-Figure 3 shows one possible model of success.
-
-So this is nice, we get a joint yoking of speed and accuracy to age, with the ability to make generalization about the probability of success in chains of length $n$ within a temporal threshold. 
-
-To review: we now have a theoretical model that can make predictions about developmental changes in the speed and accuracy of executing chains of cognitive operations. The trouble is that to constrain these predictions, we require quite a bit of external information about changes in RT and accuracy. 
+In sum, this model can make predictions about developmental changes in the speed and accuracy of executing chains of cognitive operations. But the difficulty  is that to constrain these predictions, a large amount of information about RT and accuracy is required. In the next section we turn to the estimation of these parameters via meta-analysis. 
 
 # Case Study: Early Word Learning
 
-Let's try applying this framework to early social word learning. One of the big puzzles of early language learning is *why* children begin to show evidence of language learning at the approximate developmental time they do, and not earlier or later [@tomasello1999]. Our framework provides a simple alternative: children may be trying to use language from very early, but the basic cognitive components may be too slow and too challenging to allow for consistent use (and consistent measurement by psychologists) until around the 1st birthday. The recent literature on early word learning gives some support for this contention, as more careful measurement has revealed some aspects of both receptive and productive language prior to the first birthday [@bergelson2012; @schneider2015].
+Let's try applying this framework to early social word learning. One of the big puzzles of early language learning is *why* children begin to show evidence of language learning at the approximate developmental time they do, and not earlier or later. Our framework provides a simple alternative: children may be trying to use language from very early, but the basic cognitive components may be too slow and too challenging to allow for consistent use (and consistent measurement by psychologists) until around the 1st birthday. The recent literature on early word learning gives some support for this contention, as more careful measurement has revealed some aspects of both receptive and productive language prior to the first birthday [@bergelson2012; @schneider2015].
 
 We focus here on learning a word that is presented ostensively via a social cue like gaze or pointing, which we refer to as "social word learning." For simplicity, we decompose the task of social word learning into two abilities: 1) gaze following, and 2) word recognition. This task analysis is clearly incomplete or incorrect - for example, pointing is not the same as gaze following, and recognition is not the same as learning and retention. But it nevertheless captures some aspects of the task - following a socialcue to a distal target and processing some language associated with that target. And it has the major benefit for our purposes of providing data on development, since each of these tasks is well-studied.
 
@@ -261,7 +255,7 @@ We focus here on learning a word that is presented ostensively via a social cue 
 Let's begin by attempting to estimate developmental changes in the speed of processing a word. Of course there are many factors involved, including the frequency and general familiarity of the word. But the literature on infants' early language processing generally attempts to select simple, easy words that should be accessible to almost all children, so we can use this literature to get a rough-and-ready estimate of declines in reaction time across ages. 
 
 ```{r}
-d_wr <- read.csv("../data/word_recognition_MA.csv") %>%
+d_wr <- read_csv("../data/word_recognition_MA.csv") %>%
     mutate(age_years = mean_age_1 / 365) 
 
 d_wr_kid <- d_wr %>% 
@@ -278,8 +272,9 @@ Now fit a Kail curve to these data.
 
 Note that this is a simpler analysis - we're not fitting multipliers on the slope of a mental-rotation function, we're just fitting multipliers on the actual adult RT. The Kail curve looks almost identical to the log curve we fit to the kid data - although this is partially just that they are both exponential function fits, the asymptote didn't have to be the same (e.g., didn't have to be the adult RT). 
 
-```{r fig.height=5}
+```{r fig.cap="Reaction time for word recognition. Each circle shows an experiment, with colors indicating papers and circle area indicating number of participants. Dotted line shows adult reaction time, and dashed line shows best-fitting Kail function."}
 # should be using $1/n$ as the weighting term on the error, like a weighted least-squares, but we're not weighting right now because it broke the half-logit in accuracy
+# fig.env="figure*", fig.align="center",
 
 adult_wr_rt <- d_wr_adult$rt
 
@@ -293,18 +288,25 @@ d_wr_pred <- data.frame(age_years = seq(0,5,.1),
                           a = adult_wr_rt, b = wr_opt$par[1], c = wr_opt$par[2]))
 
 ggplot(d_wr_kid, aes(x = age_years, y = x_1)) + 
-  geom_point(aes(size = n_1, col = short_cite)) + 
+  geom_point(aes(size = n_1, col = plot_cite)) + 
   geom_hline(aes(yintercept=adult_wr_rt), lty=3) +  
   geom_line(data = d_wr_pred, aes(x = age_years, y = pred), col="black", lty=2) +
+  # geom_text_repel(aes(label = short_cite), force = 20) + 
   ylim(c(0,2)) + 
   xlim(c(0,5)) + 
   xlab("Age (years)") + 
   ylab("Reaction Time (s)") + 
   scale_colour_solarized(name=NULL) + 
-  scale_size_area(name="N") + 
-  guides(colour = guide_legend(nrow = 4)) + 
-  theme(legend.text=element_text(size=8), 
-        legend.position = "bottom")
+  scale_size_area(guide=FALSE) + 
+  guides(colour = guide_legend(nrow = 7)) + 
+  theme(legend.text=element_text(size=5), 
+        legend.position = c(0, 1), 
+        legend.justification=c(0,1),
+        legend.margin = unit(.02,"in"), 
+        legend.key = element_blank(), 
+        legend.margin = unit(0, "in"), 
+        legend.key.size = unit(.1, "in"), 
+        legend.background = element_rect(fill="transparent", colour = NA))
 
 ```
 
@@ -312,7 +314,7 @@ $a = `r adult_wr_rt`$, $b = `r wr_opt$par[1]`$, and $c = `r wr_opt$par[2]`$
 
 Accuracy. 
 
-```{r fig.height=5}
+```{r}
 acc_wr_mod <- glm(accuracy ~ age_years, #weights = weight, 
                   family = binomial(psyphy::mafc.logit(2)),
                   data = d_wr_kid)
@@ -320,7 +322,7 @@ acc_wr_mod <- glm(accuracy ~ age_years, #weights = weight,
 d_wr_pred$acc_pred <- predict(acc_wr_mod, newdata = d_wr_pred, type = "response")
 
 ggplot(d_wr_kid, aes(x = age_years, y = accuracy)) + 
-  geom_point(aes(size = n_1, col = short_cite)) + 
+  geom_point(aes(size = n_1, col = plot_cite)) + 
   geom_line(data = d_wr_pred, aes(x = age_years, y = acc_pred), 
             lty = 2) + 
   geom_hline(yintercept=.5, lty=3) +  
@@ -329,10 +331,16 @@ ggplot(d_wr_kid, aes(x = age_years, y = accuracy)) +
   xlab("Age (years)") + 
   ylab("Accuracy") + 
   scale_colour_solarized(name=NULL) + 
-  scale_size_area(name="N") + 
-  guides(colour = guide_legend(nrow = 4)) + 
-  theme(legend.text=element_text(size=8), 
-        legend.position = "bottom")
+  scale_size_area(guide=FALSE) + 
+  guides(colour = guide_legend(nrow = 7)) + 
+  theme(legend.text=element_text(size=5), 
+        legend.position = c(0, .5), 
+        legend.justification=c(0,1),
+        legend.margin = unit(.02,"in"), 
+        legend.key = element_blank(), 
+        legend.margin = unit(0, "in"), 
+        legend.key.size = unit(.1, "in"), 
+        legend.background = element_rect(fill="transparent", colour = NA))
 ```
 
 
@@ -340,7 +348,7 @@ ggplot(d_wr_kid, aes(x = age_years, y = accuracy)) +
 
 Adult RT is roughly 380ms from the SOA = 0 control task reported [here](http://gustavkuhn.com/VisualCognition/Publications_by_topic_files/Kuhn--Experimental%20Brain%20Research.pdf)
 
-```{r fig.height=5}
+```{r}
 d_gf <- read.csv("../data/gaze_following_MA.csv") %>%
   mutate(age_years = mean_age_1/365, 
          pointing = str_detect(cue_type, "pointing"))
@@ -359,9 +367,10 @@ d_gf_pred <- data_frame(age_years = seq(0,5,.1),
                                         b = gf_opt$par[1], 
                                         c = gf_opt$par[2]))
 
-ggplot(d_gf, aes(x = age_years, y = m_rt_seconds)) + 
-  geom_point(aes(size = n_1, col = short_cite)) + 
-  geom_hline(aes(yintercept=adult_gf_rt), lty=3) +  
+ggplot(d_gf, 
+       aes(x = age_years, y = m_rt_seconds)) + 
+  geom_point(aes(size = n_1, col = plot_cite)) + 
+  geom_hline(aes(yintercept = adult_gf_rt), lty=3) +  
   geom_line(data = d_gf_pred, 
             aes(x = age_years, y = pred), col="black", lty=2) +
   xlim(c(0,5)) + 
@@ -369,15 +378,21 @@ ggplot(d_gf, aes(x = age_years, y = m_rt_seconds)) +
   xlab("Age (years)") + 
   ylab("Reaction Time (s)") + 
   scale_colour_solarized(name=NULL) + 
-  scale_size_area(name="N") + 
-  guides(colour = guide_legend(nrow = 4)) + 
-  theme(legend.text=element_text(size=8), 
-        legend.position = "bottom")
+  scale_size_area(guide=FALSE) + 
+  guides(colour = guide_legend(nrow = 8)) + 
+  theme(legend.text=element_text(size=5), 
+        legend.position = c(0, 1), 
+        legend.justification=c(0,1),
+        legend.margin = unit(.02,"in"), 
+        legend.key = element_blank(), 
+        legend.margin = unit(0, "in"), 
+        legend.key.size = unit(.1, "in"), 
+        legend.background = element_rect(fill="transparent", colour = NA))
 ```
 
 Accuracy. 
 
-```{r fig.height=5}
+```{r}
 acc_gf_mod <- glm(x_1 ~ age_years * pointing, #weights = 1/n_1, 
                   family = "binomial",
                   data = d_gf)
@@ -386,19 +401,27 @@ d_gf_pred$pointing <- c(rep(c(TRUE,FALSE), nrow(d_gf_pred)/2), TRUE)
 d_gf_pred$acc_pred <- predict(acc_gf_mod, newdata = d_gf_pred, type = "response")
 
 ggplot(d_gf, aes(x = age_years, y = x_1)) + 
-  geom_point(aes(size = n_1, col = short_cite, pch = pointing)) + 
-  geom_line(data = d_gf_pred, aes(x = age_years, y = acc_pred, col = pointing), 
-            lty = 2) + 
+  geom_point(aes(size = n_1, col = plot_cite, pch = pointing)) + 
+  geom_line(data = d_gf_pred, aes(x = age_years, y = acc_pred, lty = pointing)) + 
+
   # geom_hline(yintercept=.5, lty=3) +  
   ylim(c(0,1)) + 
   xlim(c(0,5)) + 
   xlab("Age (years)") + 
   ylab("Accuracy") + 
   scale_colour_solarized(name=NULL) + 
-  scale_size_area(name="N") + 
-  guides(colour = guide_legend(nrow = 4)) + 
-  theme(legend.text=element_text(size=8), 
-        legend.position = "bottom")
+  scale_size_area(guide=FALSE) + 
+  scale_shape(guide=FALSE) + 
+  scale_linetype(guide=FALSE) +
+  guides(colour = guide_legend(nrow = 8)) + 
+  theme(legend.text=element_text(size=5), 
+        legend.position = c(.3, .5), 
+        legend.justification=c(0,1),
+        legend.margin = unit(.02,"in"), 
+        legend.key = element_blank(), 
+        legend.margin = unit(0, "in"), 
+        legend.key.size = unit(.1, "in"), 
+        legend.background = element_rect(fill="transparent", colour = NA))
 ```
 
 ## Estimating the speed of reference
@@ -415,7 +438,7 @@ for (f in files) {
 }
 ```
 
-As an approximation, we measure the time between utterances with referential content in child-directed speech. We use the Fernald and Morikawa corpus [@fernald1993, @frank2013], as annotated for the approximate time of each utterance by [@rohde2015]. This corpus contains `r length(unique(fm$video))` annotated videos of interactions between children and their caregivers playing with toys at home. 
+As an approximation, we measure the time between utterances with referential content in child-directed speech. We use the Fernald and Morikawa corpus [@fernald1993, @frank2013], as annotated for the approximate time of each utterance by [@rohde2014]. This corpus contains `r length(unique(fm$video))` annotated videos of interactions between children and their caregivers playing with toys at home. 
 
 ```{r}
 fm %<>%
