@@ -32,6 +32,7 @@ library(directlabels)
 library(stringr)
 library(magrittr)
 library(readr)
+library(ggrepel)
 ```
 
 ```{r helper_functions}
@@ -67,13 +68,23 @@ kail_mse <- function(x, a, age, dv) {
 }
 
 ## accuracy function (logistic)
-acc_fun <- function(age, alpha, beta) {
+logit_acc_fun <- function(age, alpha, beta) {
   inv_logit(alpha + beta * age)
+}
+
+## accuracy function (half-logit)
+half_logit_acc_fun <- function(age, alpha, beta) {
+  .5 + .5 * inv_logit(alpha + beta * age)
 }
 
 ## simulation function for logit 
 get_logit_acc <- function(n.sims, n.ops = 1, age, alpha, beta) {
   rbinom(n.sims, n.ops, acc_fun(age, alpha, beta)) == n.ops
+}
+
+## simulation function for half-logit 
+get_half_logit_acc <- function(n.sims, n.ops = 1, age, alpha, beta) {
+  rbinom(n.sims, n.ops, half_logit_acc_fun(age, alpha, beta)) == n.ops
 }
 
 ## simulation function for theta
@@ -230,7 +241,10 @@ We focus here on learning a word that is presented ostensively via a social cue 
 
 We first attempt to estimate developmental changes in the speed of processing for word recognition. Seminal work by @fernald1998 used eye-movements to measure children's accuracy and reaction time across development. Subsequent investigations have identified many factors involved in speed of word recognition (e.g., the frequency and familiarity of the target word). Nevertheless, such research generally attempts to select simple, easy words that should be accessible to almost all children, so we can use this literature to derive rough estimates of accuracy and reaction time across development. 
 
-```{r}
+```{r wr_rt,  fig.pos = "t", fig.cap="Reaction times for two-alternative forced-choice word recognition paradigms. Each circle shows an experiment, with colors indicating papers;  areas are scaled by the number of participants in each study. Dotted line shows adult reaction time. Dashed lines show best-fitting Kail function (black) and a generic loess smoothing function (blue)."}
+# should be using $1/n$ as the weighting term on the error, like a weighted least-squares, but we're not weighting right now because it broke the half-logit in accuracy
+# fig.env="figure*", fig.align="center",
+
 d_wr <- read_csv("../data/word_recognition_MA.csv") %>%
     mutate(age_years = mean_age_1 / 365) 
 
@@ -242,13 +256,6 @@ d_wr_adult <- d_wr %>%
   filter(age_years > 20) %>% 
   summarise(rt = mean(x_1, na.rm=TRUE), 
             acc = mean(accuracy))
-```
-
-We conducted a systematic literature review by using Google Scholar to identify peer-reviewed papers citing @fernald1998. We screened this sample manually to find the subsample of `r length(unique(d_wr$short_cite))` papers that reported both accuracy and reaction time with sufficient detail to permit coding. 
-
-```{r wr_rt,  fig.pos = "t", fig.cap="Reaction times for two-alternative forced-choice word recognition paradigms. Each circle shows an experiment, with colors indicating papers;  areas are scaled by the number of participants in each study. Dotted line shows adult reaction time, and dashed line shows best-fitting Kail function."}
-# should be using $1/n$ as the weighting term on the error, like a weighted least-squares, but we're not weighting right now because it broke the half-logit in accuracy
-# fig.env="figure*", fig.align="center",
 
 adult_wr_rt <- d_wr_adult$rt
 
@@ -265,6 +272,7 @@ ggplot(d_wr_kid, aes(x = age_years, y = x_1)) +
   geom_point(aes(size = n_1, col = plot_cite), alpha = .75) + 
   geom_hline(aes(yintercept=adult_wr_rt), lty=3) +  
   geom_line(data = d_wr_pred, aes(x = age_years, y = pred), col="black", lty=2) +
+  geom_smooth(span = 1, se=FALSE, lty=2) + 
   ylim(c(0,2)) + 
   xlim(c(0,5)) + 
   xlab("Age (years)") + 
@@ -272,7 +280,6 @@ ggplot(d_wr_kid, aes(x = age_years, y = x_1)) +
   scale_colour_solarized(name=NULL) + 
   scale_size_area(guide=FALSE) + 
   guides(colour = guide_legend(nrow = 7)) + 
-  geom_smooth(span = 1, se=FALSE) + 
   theme_bw() + 
   theme(legend.text=element_text(size=5), 
         legend.position = c(0, 1), 
@@ -285,7 +292,7 @@ ggplot(d_wr_kid, aes(x = age_years, y = x_1)) +
   theme(text = element_text(size = 9))
 ```
 
-```{r wr_acc, fig.pos = "t", fig.cap="Accuracies for word recognition paradigms. Circles show experiments, with colors indicating papers;  areas are scaled by the number of participants in each study. Dotted line shows chance, and dashed line shows best-fitting half-logit function."}
+```{r wr_acc, fig.pos = "t", fig.cap="Accuracies for word recognition paradigms. Circles show experiments, with colors indicating papers;  areas are scaled by the number of participants in each study. Dotted line shows chance, and dashed lines show best-fitting half-logit function (black) and loess (blue)."}
 
 acc_wr_mod <- glm(accuracy ~ age_years, #weights = weight, 
                   family = binomial(psyphy::mafc.logit(2)),
@@ -319,19 +326,22 @@ ggplot(d_wr_kid, aes(x = age_years, y = accuracy)) +
 ```
 
 
-Figure \ref{fig:wr_rt} shows reaction times from this sample of papers, plotted by the mean age of the children in the reported studies. The dashed line shows an exponential function fit to these data (with $a = `r round(adult_wr_rt, digits =2)`$, $b = `r round(wr_opt$par[1], digits=2)`$, and $c = `r round(wr_opt$par[2], digits=2)`$). The intercept $a$ is estimated as the mean reaction time for adults in control experiments.^[Note that @kail1991's original analysis was of the slope of mental rotation speeds, so the exponential curve described a multiplier on the adult slope. This analysis is simpler, fitting a curve to the mean RTs directly.] Accuracies can be estimated similarly. We fit a logistic regression to accuracy data, using a half-logit linking function ($.5 + .5 \times \frac{1}{1 + e^-x}$) to bound accuracy between .5 and 1. Figure \ref{fig:wr_acc} shows the results of this analysis, with estimated parameters $\alpha = `r round(coef(acc_wr_mod)[1], digits =2)`$ and $\beta = `r round(coef(acc_wr_mod)[2], digits=2)`$. In both of these cases we see a qualitatively strong fit between the developmental model we assumed and the particulars of the experimental data. 
+We conducted a systematic literature review by using Google Scholar to identify peer-reviewed papers citing @fernald1998. We screened this sample manually to find the subsample of `r length(unique(d_wr$short_cite))` papers that reported both accuracy and reaction time with sufficient detail to permit coding. 
+
+Figure \ref{fig:wr_rt} shows reaction times from this sample of papers, plotted by the mean age of the children in the reported studies. The dashed line shows an exponential function fit to these data (with $a = `r round(adult_wr_rt, digits =2)`$, $b = `r round(wr_opt$par[1], digits=2)`$, and $c = `r round(wr_opt$par[2], digits=2)`$). The intercept $a$ is estimated as the mean reaction time for adults in control experiments.^[Note that @kail1991's original analysis was of the slope of mental rotation speeds, so the exponential curve described a multiplier on the adult slope. This analysis is simpler, fitting a curve to the mean RTs directly.] Accuracies can be estimated similarly. We fit a logistic regression to accuracy data, using a half-logit linking function ($.5 + .5 \times \frac{1}{1 + e^-x}$) to bound accuracy between .5 and 1. Figure \ref{fig:wr_acc} shows the results of this analysis, with estimated parameters $\alpha = `r round(coef(acc_wr_mod)[1], digits =2)`$ and $\beta = `r round(coef(acc_wr_mod)[2], digits=2)`$. In both of these cases we see a qualitatively strong fit between the developmental model we assumed and the particulars of the experimental data (e.g., as estimated by a non-parametric model, shown in blue). 
 
 ## Gaze following
 
-For our analysis of gaze-following, we identified papers *KM/MLL PLEASE FILL IN DETAILS*. As a first division of the data we identified papers that used gaze alone, or combined gaze with pointing.
+For our analysis of gaze-following, we identified papers *ADD DETAILS*. As a first division of the data we identified papers that used gaze alone, or combined gaze with pointing. We focused on papers with a simple two-alternative forced choice, as integrating across different numbers of alternatives added additional complexity to our model. We experimented with using a half-logit link function here, but found that many studies reported accuracies below .5 due to children's failure to disengage from the experiemnter's face; thus, we used a standard logistic model.  
 
 In our first iteration of this analysis, we found that very few studies reported reaction times for gaze following, and those that did had no data from children older than 15 months and no data from pointing. Estimating developmental curves for these data was difficult; to remedy this issue we included new analyses of data from @yurovsky2013 and @yurovsky2015. Both of these paradigms were word learning experiments in which a social cue (either brief or extended) was used to mark a particular referent. Data from these studies can thus be used to estimate social cue following time, and both studies included large numbers of participants at older age ranges, constraining our analysis. *ADD ADULT RT ESTIMATE* 
 
-```{r gf_rt, fig.pos = "t", fig.cap="Reaction times for gaze following. Dots show experiments, scaled by number of participants; colors denote papers. The dotted line represents an estimate of adult reaction time; dashed line shows best-fitting Kail curve."}
+```{r gf_rt, fig.pos = "t", fig.cap="Reaction times for gaze following. Plotting conventions are as above. Results for pointing are shown with a black border."}
 
 d_gf <- readr::read_csv("../data/gaze_following_MA.csv") %>%
   mutate(age_years = mean_age_1/365, 
-         pointing = str_detect(cue_type, "pointing"))
+         pointing = str_detect(cue_type, "pointing")) %>%
+  filter(num_AFC=="2AFC")
 
 adult_gf_rt <- .38
 d_gf_gaze <- filter(d_gf, !pointing)
@@ -389,7 +399,7 @@ ggplot(filter(d_gf, plot_cite!="Adult Intercept"),
   theme(text = element_text(size = 9))
 ```
 
-```{r gf_acc, fig.pos = "t", fig.cap="Accuracies for social cue following. Plotting conventions are as above, with shape indicating studies with gaze vs. gaze and pointing."}
+```{r gf_acc, fig.pos = "t", fig.cap="Accuracies for social cue following. Plotting conventions are as above."}
 acc_gf_mod <- glm(x_1 ~ age_years * pointing, #weights = 1/n_1, 
                   family = "binomial",
                   data = d_gf)
@@ -513,7 +523,7 @@ suggesting that parents were not substantially adjusting the pace of conversatio
 
 # Simulations
 
-```{r full_sim, fig.pos = "t", fig.cap="Simulation results using meta-analytic parameters."}
+```{r full_sim, fig.pos = "t", fig.height = 2.5, fig.cap="Simulation results using meta-analytic parameters."}
 n.sims <- 1000
 ages <- seq(0, 5, .1)
 cues <- c("gaze","pointing")
@@ -542,9 +552,9 @@ sims <- expand.grid(age = ages,
                                   a = .$a_wr, b = .$b_wr, c = .$c_wr), 
                 sc_rt = get_kail_rts(n.sims = n.sims, age = .$age,
                                      a = .$a_gf, b = .$b_gf, c = .$c_gf),
-                wr_acc = get_logit_acc(n.sims = n.sims, age = .$age, 
+                wr_acc = get_half_logit_acc(n.sims = n.sims, age = .$age, 
                                   alpha = .$alpha_wr, beta = .$beta_wr), 
-                sc_acc = get_logit_acc(n.sims = n.sims, age = .$age, 
+                sc_acc = get_half_logit_acc(n.sims = n.sims, age = .$age, 
                                        alpha = .$alpha_gf, beta = .$beta_gf),
                 theta = get_thetas(n.sims = n.sims, 
                                    theta = .$theta, 
@@ -559,22 +569,22 @@ ms <- sims %>%
             p = mean(wr_rt + sc_rt < theta & wr_acc & sc_acc))
 
 ggplot(ms, aes(x = age, y = p, col = cue)) + 
-  geom_line() + 
+  geom_point() + 
+  geom_smooth(se=FALSE) + 
   scale_colour_solarized(guide=FALSE) + 
+  geom_label_repel(data = filter(ms, age == 2.5), 
+                   aes(label=cue), label.padding=unit(.05,"in")) + 
   # geom_dl(aes(label = cue), method = "top.qp") + 
   ylab("Probability of successful ostensive learning") + 
   xlab("Age (months)") + 
-  ylim(c(0,1)) + 
+  ylim(c(0,.6)) + 
   theme_bw() + 
   theme(text = element_text(size = 9))
 ```
 
-We now run the same developmental simulations described above, but using the estimated numerical parameters for word processing, social cue following, and the timing of utterances in child-directed speech. Figure \ref{fig:full_sim} shows the probability of successful ostensive learning by age under this model, split by 
+We now run the same developmental simulations described above, but using the estimated numerical parameters for word processing, social cue following, and the timing of utterances in child-directed speech. Figure \ref{fig:full_sim} shows the probability of successful ostensive learning by age, split by social cue. Pointing is substantially more effective than gaze following, but under this naive model, neither cue ever leads to success more than half of the time. While low accuracy constrains performance early in development, accuracy is above 80\% by age 3 and reaction time is the bounding factor.\footnote{One consequential decision for the model is the assumed response function for social cues. Here we have used a half-logit link function, assuming that half of the time, the child will be looking at the correct object anyway. Without this assumption, learning probabilities for early infancy go down essentially to zero.}
 
-
-How many learning instances does this entail?
-
-```{r instances, fig.pos = "t", fig.cap = "Average number of learning instances needed per effective learning instance, plotted by age."}
+```{r instances, fig.pos = "t", fig.height=2.5, fig.cap = "Average number of learning instances needed per effective learning instance, plotted by age."}
 
 ggplot(ms, aes(x = age, y = 1/p, col = cue)) + 
   geom_point() + 
@@ -582,34 +592,28 @@ ggplot(ms, aes(x = age, y = 1/p, col = cue)) +
   scale_colour_solarized(guide=FALSE) + 
   ylab("Number of learning instances needed") + 
   xlab("Age (months)") + 
-  scale_y_log10(limits = c(1,1000)) + 
-  geom_hline(yintercept = 1, lty = 3) + 
+  ylim(c(0,15)) + 
+  geom_label_repel(data = filter(ms, age == 2.5), 
+                  aes(label=cue), label.padding=unit(.05,"in")) + 
   theme_bw() + 
   theme(text = element_text(size = 9))
 ```
 
+A second way of viewing these same simulations is given in Figure \ref{fig:instances}, which shows the average number of learning instances a learner would need to achieve a single successful mapping trial under this model. This number declines from more than 10 in early infancy to an asymptote of approximately two. Here the difference between gaze and pointing is more apparent, especially earlier in development. This difference is congruent with the difficulties in word learning from gaze observed by @yurovsky2013 (one of the papers whose cue-following measurements we used above).
+
+Is it reasonable to assume that not all word mapping opportunities succeed? After all, 3--4-year-old children have been show to learn words from a single exposure [@carey1978]. We would argue that a success rate of approximately one half at age three is actually very congruent with accuracies in the 60-80\% rate shown by @markson1997 and others (given a handful of exposures during training). And rates of learning for younger children also show some numerical congruence (e.g., @woodward1994 showed some evidence of learning from nine exposures in 13- and 18-month-olds). In sum, even though average results suggest that some children may learn from a small set of exposures, they do not imply that *all* children have learned. 
+
 #  Discussion
 
-Discussion:
+We presented a model of children's developing processing capabilities in which the sole age-related changes are in the speed and accuracy of mental operations. This strong null model of development is a first step towards a baseline for cognitive development, attempting to answer the question of what changes we would see even if there were *no* substantive changes in children's internal representations. When we fit the model to early word learning, using data from word recognition and social cue following paradigms, we found evidence of developmental change and _prima facie_ congruence with some previous experimental work. 
 
-+ Relationship to other models
-+ Serial vs. parallel
-+ Relationship to neural development
+The simple model we described here has many apparent limitations. First, we estimated parameters from the data that were available rather than the data we would have liked to have (e.g., reaction times from familiar word recognition rather than from novel word learning). Second, we assumed a purely serial model of responding in which accuracy and reaction time were independent from one another; more sophisticated models of decision-making might link processes in a race model or yoke accuracy and reaction-time in a speed-accuracy tradeoff. Third, although we did not find evidence of large changes in the pace of utteances across development, parents likely still adapt to their children's speed of processing in some instances, leading to better outcomes for those optimal learning instances. 
 
-Limitations:
-
-+ Word recognition != learning
-+ Speed of the world may adapt to speed of processing
-+ Accuracy and speed don't trade off against one another. 
-+ not true meta-analysis
-
-But - important exercise regardless, because if we look at the RTs for gaze following, we see that they are generally longer than the speed of new utterances. This suggests that even if the majority of our model is incorrect (and likely it is), it's still unlikely that children before their first birthday can learn from gaze following. 
-
-
+Despite the many assumptions and limitations of this modeling exercise, we believe that the results still should be an important constraint on theorizing. Even if we discard the parametric form of the model and simply examine reaction times for gaze following, we see that they are generally longer than the interval between new utterances. This numerical observation suggests that even if the majority of our model is incorrect, it is still unlikely that children before their first birthday can learn words using gaze cues, even if in principle all the competence necessary is in place. 
 
 # Acknowledgements
 
-Thanks to members of the Language and Cognition Lab at Stanford for helpful discussion. Thanks to NSF BCS 1528526.
+This work supported by NSF BCS \#1528526. Thanks to members of the Language and Cognition Lab at Stanford for helpful discussion. 
 
 # References 
 
