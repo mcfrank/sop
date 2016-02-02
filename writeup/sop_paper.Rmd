@@ -8,7 +8,7 @@ author-information:
     \author{{\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University \And {\large \bf Molly L. Lewis} \\ \texttt{mll@stanford.edu} \\ Department of Psychology \\ Stanford University \And {\large \bf Kyle MacDonald} \\ \texttt{kyle.macdonald@stanford.edu} \\ Department of Psychology \\ Stanford University}
 
 abstract: 
-     "The emergence of language around a child's first birthday is one of the greatest transformations in human development. Does this transition require a fundamental shift in the child's knowledge or beliefs, or could it instead be attributable to more gradual changes in processing abilities? We present a simple process model of cognitive performance that supports the second conclusion. The premise of this model is that any cognitive operation requires multiple steps, each of which require some time to complete and have some probability of failure. We use meta-analysis to estimate these parameters for two components of simple ostensive word learning: social cue use and word recognition. When combined in our model, these estimates suggest that even learning should be very difficult for children younger than around a year, especially with gaze alone. This model takes a first step towards quantifying performance limitatiosn for cognitive development and may be broadly applicable to other developmental changes."
+     "The emergence of language around a child's first birthday is one of the greatest transformations in human development. Does this transition require a fundamental shift in the child's knowledge or beliefs, or could it instead be attributable to more gradual changes in processing abilities? We present a simple process model of cognitive performance that supports the second conclusion. The premise of this model is that any cognitive operation requires multiple steps, each of which require some time to complete and have some probability of failure. We use meta-analysis to estimate these parameters for two components of simple ostensive word learning: social cue use and word recognition. When combined in our model, these estimates suggest that learning should be very difficult for children younger than around a year, especially with gaze alone. This model takes a first step towards quantifying performance limitations for cognitive development and may be broadly applicable to other developmental changes."
     
 keywords:
     "Speed of processing; development; word learning; meta-analysis"
@@ -79,7 +79,7 @@ half_logit_acc_fun <- function(age, alpha, beta) {
 
 ## simulation function for logit 
 get_logit_acc <- function(n.sims, n.ops = 1, age, alpha, beta) {
-  rbinom(n.sims, n.ops, acc_fun(age, alpha, beta)) == n.ops
+  rbinom(n.sims, n.ops, logit_acc_fun(age, alpha, beta)) == n.ops
 }
 
 ## simulation function for half-logit 
@@ -95,17 +95,22 @@ get_thetas <- function(n.sims, theta, iota = 1) {
 
 # Introduction
 
-Human beings begin their lives as helpless infants yet quickly become children who are able to perceive, act, and communicate. Infants who cannot communicate quickly become toddlers who use words to share attention and indicate their desires [@clark2009]. Toddlers who cannot follow the trajectory of a ball become preschoolers who can [@hood2000]. A fundamental question of developmental psychology is how thses external behavioral differences come about via internal processes of developmental change. 
+Human beings begin their lives as helpless infants yet rapidly become children who are able to perceive, act, and communicate. Infants who cannot communicate become toddlers who use words to share attention and indicate their desires. Toddlers who cannot follow the trajectory of a ball become preschoolers who can. A fundamental question of developmental psychology is how thses external behavioral differences come about via internal processes of developmental change. 
 
-One possibility is that these external transitions are a product of radical internal shifts, such as the discovery of the communicative function of language, or the emergence of a theory of others' minds. Such shifts have been a centerpiece of constructivist theories of development from Piaget [-@piaget1969] onward. These theories have obvious appeal, at least in part because the outward changes in children's cognitive abilities are so dramatic.  Yet several decades of work with infants has revealed a surprising amount of detectable knowledge about cognitive domains, often months or even years prior to these external manifestations [@spelke2007;@carey2009]. How could these two sets of observations co-exist? 
+One possibility is that these external transitions are a product of radical internal shifts, such as the discovery of the communicative function of language, or the emergence of a theory of others' minds. Such shifts have been a centerpiece of constructivist theories of development from Piaget [-@piaget1969] onward. These theories have obvious appeal, at least in part because the outward changes in children's cognitive abilities are so dramatic.  Yet several decades of work with infants has revealed a surprising amount of detectable knowledge about cognitive domains, often months or even years prior to these external manifestations [@carey2009]. How could these two sets of observations co-exist? 
 
-But perhaps children's intense performance limitations---basically, difficulties _using_ knowledge that they nevertheless possess---limit our abilities to observe or even to measure what they know. Perhaps planning to reach for an object is difficult and time-consuming enough that toddlers lose track of what they were looking for [@keen2003]. And perhaps infants are trying to learn the meanings of words and produce them in order to communicate, they are just too slow and error-prone to make much progress in this task. 
+But perhaps children's intense performance limitations---basically, difficulties _using_ knowledge or representations that they nevertheless possess---limit our abilities to observe or even to measure their competence [@chomsky1965]. Perhaps planning to reach for an object is difficult and time-consuming enough that toddlers lose track of what they were looking for [@keen2003]. And perhaps infants are trying to learn the meanings of words, they are just too slow and error-prone to make much progress in this task. In some sense, this hypothesis constitues a strong null model of development: speed and accuracy *must* change, even if no internal representations do.\footnote{Note that this viewpoint does not entail any sort of nativism at all. It merely suggests that the relevant competence emerges significantly earlier than is typically supposed.} 
 
-In the current paper, we take up this second suggestion, using early word learning as a case study for exploring the role of performance limitations on children's early behavior. The emergence of language is one area where theoretical views have differed widely. Must children master a particular insight about the role of language in communication to begin learning words in earnest [@hollich2000;@kamhi1986], or are they pursuing the same activity throughout early childhood, but with more success later on [@mcmurray2007]? Following the classic distinction, do infants lack competence, or do they simply suffer from severe performance limiltations [@chomsky1965]?\footnote{Note that this viewpoint does not entail any sort of nativism at all. It merely suggests that the relevant competence emerges significantly earlier than is typically supposed.}
+In the current paper, we take up the challenge of building such a null model, using early word learning as a case study for exploring the role of performance limitations. The emergence of language is one area where theoretical views have differed widely. Must children master a particular insight about the role of language in communication to begin learning words in earnest [@hollich2000], or are they pursuing the same activity throughout early childhood, but with more success later on [@mcmurray2007]? 
 
-Some empirical data support the possibility of early communicative competences. Six- to 12-month-olds have some expectations about the function of words in communication and show longer looking times when those expectations are violated [@martin2012;@vouloumanos2012]. And 6- to 9-month-olds perform above chance in word-object mapping tasks [@bergelson2012]. But the level of performance they show compared with older children is so limited that the data also seem to provide _prima facie_ evidence for some kind of shift in representation. 
+Some empirical data support the possibility of early communicative competence. At their first birthday, infants have some expectations about the function of words in communication and show longer looking times when those expectations are violated [@vouloumanos2012]. And 6- to 9-month-olds perform above chance in word-object mapping tasks [@bergelson2012]. But the level of performance they show compared with older children is so limited that the data also seem to provide _prima facie_ evidence for some kind of shift in representation. 
 
-We suggest instead that continuous developmental processes might be responsible, specifically increases in the speed and reliability of internal cognitive processes. We pursue this suggestion by creating a performance model for early word-object mapping. Our starting point is the idea that even the simplest word learning input for object referents involves following some kind of attentional cue (e.g., gaze or pointing) to a distal target and the processing some kind of link between a word and the target referent. Each of these abilities has been shown to develop dramatically over the first two years and beyond. So it stands to reason that any achievement that depends on both should develop even *more* dramatically in the same period. 
+\begin{figure}[b]
+\includegraphics[width=3.25in]{diagram.pdf}
+\caption{A schematic visualization of the stages of processing in our model (squares), along with the relevant parameters for each process (circles).\label{fig:model}}
+\end{figure}
+
+We suggest instead that continuous developmental processes might be responsible, specifically increases in the speed and reliability of internal cognitive processes. We pursue this suggestion by creating a performance model for early word-object mapping. Our starting point is the idea that even the simplest word learning input for object referents involves following some kind of attentional cue (e.g., gaze or pointing) to a distal target and then processing some kind of link between a word and the target referent. Each of these abilities has been shown to develop dramatically over the first two years and beyond. So it stands to reason that any achievement that depends on both should develop even *more* dramatically in the same period. 
 
 Our goal is to create a quantitative model that allows us to formalize this intuiton. Inspired by recent meta-analyses of developmental phenomena [e.g., @cristia2014; @tsuji2014], we conduct systematic literature reviews of the literature on social cueing [e.g., gaze following; @scaife1975] and word recognition [@fernald1998]. These meta-analytic surveys, in combination with parametric models of developent [e.g., @kail1991] allow us to estimate the speed and accuracy for a two-component model of word learning. 
 
@@ -113,27 +118,9 @@ The outline of the paper is as follows. We begin by describing the basic model a
 
 # Model
 
-The basic assumptions of our performance model are familiar from cognitive architectures that attempt to capture specifics of cognitive processes [e.g., ACT-R; @anderson1996], namely, every cognitive operation has a processing time and a probability of failure. Each complex cognitive operation is decomposable into a chain of simpler operations, any one of which can fail. And if a single link in the chain fails, then the overall operation fails as well. Thus, the probability of failure is the product of the individual failures. Similarly for timing, the total processing time for a chain of operations is the sum of the processing times for the parts. 
+```{r chain_sims, fig.height = 2, fig.pos = "t", fig.cap="Probability of successsfully executing chains of cognitive operations---each with their own speed and reliability---with different numbers of steps (shown by different colors). Facets show diferent temporal thresholds."}
 
-Complex actions are describable at many different granularities. For example, word learning from an ostensive cue (e.g., parent says "doggie!" while pointing at a dog) can be decomposed into 1) social cue following and 2) word recognition/mapping. But social cue following can be further decomposed into 1a) attending to the cue, 1b) processing the directionality of the cue, and 1c) executing an eye-movement to the cue's target. Each of these could easily be broken down further. There is no one decomposition of a task, but we view this feature as a strength rather than a weaknesses of the basic framework, which can be applied to units at any grain size for which speed and reliability of processes can be measured.
-
-```{r}
-#^[For more on this point, see e.g., @smith2013, who describe a similar analysis of how reaction times in language processing can be broken down into successively smaller increments within the same basic model.] In this section we first present the basic model of chains of mental processes, and then supplement it by making assumptions about how speed and reliability develop for each constituent operation in the chain. 
-```
-
-## Chains of Mental Processes
-
-Consider a sequence of interacting mental processes. We assume that each of these has a Bernoulli success probability $s_p$, implying that with probability $1-s_p$, they fail. For simplicity, in this initial presentation, we assume chains where all of the operations have the same probability $s$. We further assume that one failure in a series of operations leads to the failure of the chain $c$. Thus, the probability of a sequence of failures is exponential such that $P_{success} = s^{n}$, where $n$ is the length of the chain. 
-
-Imagine a time-sensitive operation with a temporal threshold sampled from a log-normal distribution with mean $\theta$ and standard deviation $\iota$, such that if the operations are not completed within this threhold, then there is no possibility of learning. We then sample a time to completion for each operation, assuming that operation completion times are also sampled from a lognormal distribution:
-
-$$RT(s_p) \sim \log(N(\mu,\sigma))$$
-
-\noindent Note that there is not a known parametric form for the sum of multiple lognormals. A variety of analytic approximations for these sums exist [@fenton1960], but they have some limitations, so instead we use numerical simulations here for simplicity. All code and data for the simulations reported here is available at [http://github.com/mcfrank/sop](http://github.com/mcfrank/sop).
-
-```{r chain_sims, fig.pos = "t", fig.cap="Probability of successsfully executing chains of cognitive operations---each with their own speed and reliability---with different numbers of steps. Facets show diferent temporal thresholds."}
-
-thetas <- seq(1, 6)
+thetas <- c(2,4,6)
 ns <- 1:5
 ss <- seq(.3,.9,.2)
 nsims <- 1000
@@ -163,33 +150,12 @@ ggplot(sims, aes(x = n, y = p, col = factor(s))) +
   theme(text = element_text(size = 9))
 ```
 
-We can now approximate the probability that a chain is successful within a particular threshold. A representative set of simulations are shown in Figure \ref{fig:chain_sims}. For these and many other parameter settings, long chains of operations are unlikely to succeed unless individual operations are very fast and very accurate. 
+The basic assumptions of our performance model are familiar from cognitive architectures that attempt to capture specifics of cognitive processes [e.g., ACT-R; @anderson1996], namely, every cognitive operation has a processing time and a probability of failure. Each complex cognitive operation is decomposable into a chain of simpler operations, any one of which can fail. And if a single link in the chain fails, then the overall operation fails as well. Thus, the probability of failure is the product of the individual failures. Similarly for timing, the total processing time for a chain of operations is the sum of the processing times for the parts. 
 
-```{r}
-#Even assuming the median time to execution for a single step is 1s ($e^{\mu}=1$), successful and timely execution of multi-step sequences is very unlikely within a reasonable time frame. For example, with threshold $\theta = 6$, chains of length 3 were only successful even half the time if each separate sub-action was extremely likely to succeed ($s > .9$). At shorter values of $\theta$, virtually no chains of length 3 were successful. Of course, to be meaningful, these simulations require estimates for the values of $n$ for the particular chain; $\mu$ and $\sigma$ for the speed of each suboperation; $s$ for the accuracy of each suboperation; and$\theta$ and $\iota$ for the temporal distribution of opportunities for the behavior.
-```
+Complex actions are describable at many different granularities. For example, word learning from an ostensive cue (e.g., parent says "doggie!" while pointing at a dog) can be decomposed into 1) social cue following and 2) word recognition/mapping. But social cue following can be further decomposed into 1a) attending to the cue, 1b) processing the directionality of the cue, and 1c) executing an eye-movement to the cue's target. Each of these could easily be broken down further. There is no one decomposition of a task, but we view this feature as a strength rather than a weaknesses of the basic framework, which can be applied to units at any grain size for which speed and reliability of processes can be measured. The overall model architecture is shown in Figure \ref{fig:model}. 
 
-## Development within the model
+## Chains of mental processes
 
-The two posited capacities in our model are speed and accuracy. Both of these should change across development for any constituent cognitive operation, leading to dramatic changes in the cumulative speed and accuracy of chains of operations across development. To estimate these changes, we use parametric models of developmental change.
-
-Pioneering work by Kail (see e.g., [-@kail1991]) describes the developmental trajectory of reaction times for complex tasks, via aggregation across the published literature. 
-```{r}
-# ^[We will refer to this technique throughout as "meta-analysis" though technically the term might also be used appropriately only for those analyses that use classic techniques for cross-experiment weighting [@hedges2014].]
-```
-He notes that empirically, the slope of these reaction times follows an exponential, such that
-
-$$Y(i) = a + b e^{-ci},$$
-
-\noindent where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. The [@kail1991] model is a model of RT multipliers. Since operations are additive, these multipliers should apply to individual operations or to chains of operations equivalently: if the multiplier is constant then it can be factored out. 
-
-Next we turn to accuracy. For simplicity, we consider the probability of success on a single operation changing across time as a simple logistic function:
-
-$$Y(i) = \frac{1}{1 + e^{\alpha + \beta i}},$$
-
-\noindent where $\alpha$ sets the intercept and $\beta$ marks the developmental multiplier, as in a standard logistic regression. 
-
-## Development of speed and accuracy
 
 ```{r devo_sims, fig.height = 2, fig.pos = "t", fig.cap="Probability of success for one set of developmental parameters. Different colored lines indicate chains of differing lengths, panels show different temporal thresholds."}
 
@@ -221,7 +187,7 @@ ggplot(ms, aes(x = age, y = p, col = factor(chain.len))) +
   facet_wrap(~theta) +
   geom_dl(aes(label = factor(chain.len)), method = list("last.qp", cex=.75)) + 
   scale_colour_solarized(guide=FALSE) + 
-  ylab("p(successful chain)") + 
+  ylab("Probability of success") + 
   xlab("Age (months)") + 
   xlim(c(0,26)) + 
   ylim(c(0,1)) + 
@@ -229,21 +195,13 @@ ggplot(ms, aes(x = age, y = p, col = factor(chain.len))) +
   theme(text = element_text(size = 9))
 ```
 
-We can combine these functions with the basic operation chain simulations defined above and examine the probability of a successful chain of operations. Results for one parameter set are shown in Figure \ref{fig:devo_sims}. These simulations show that sharp develomental transitions between failure and success can be the product of relatively broad underlying functions. But the difficulty is that to constrain the model's predictions, a large amount of information about RT and accuracy is required. In the next section we turn to the estimation of these parameters via meta-analysis. 
 
-# Case Study: Early Word Learning
-
-Why do children begin to show evidence of language learning around their first birthday? Although many accounts have been proposed [e.g. @tomasello1995's "nine-month revolution"], our framework provides a simple explanation. Children may be trying to use language from very early in development, but the basic cognitive components may be too slow and too challenging to allow for consistent use (and consistent measurement by psychologists). The recent literature on early word learning gives some support for this contention, as more careful measurement has revealed some aspects of both receptive and productive language prior to the first birthday [@bergelson2012; @schneider2015].
-
-We focus here on learning a word that is presented ostensively via a social cue like gaze or pointing. For simplicity, we decompose the task of social word learning into two abilities: 1) gaze following, and 2) word recognition. This task analysis is an approximation: pointing is not the same as gaze following, and recognition is not the same as learning and retention. But it nevertheless captures some aspects of the task---following a social cue to a distal target and processing some language associated with that target. And it has the major benefit for our purposes of providing data on development, since each of these tasks is well-studied.
-
-## Word processing
-
-We first attempt to estimate developmental changes in the speed of processing for word recognition. Seminal work by @fernald1998 used eye-movements to measure children's accuracy and reaction time across development. Subsequent investigations have identified many factors involved in speed of word recognition (e.g., the frequency and familiarity of the target word). Nevertheless, such research generally attempts to select simple, easy words that should be accessible to almost all children, so we can use this literature to derive rough estimates of accuracy and reaction time across development. 
-
-```{r wr_rt,  fig.pos = "t", fig.cap="Reaction times for two-alternative forced-choice word recognition paradigms. Each circle shows an experiment, with colors indicating papers;  areas are scaled by the number of participants in each study. Dotted line shows adult reaction time. Dashed lines show best-fitting Kail function (black) and a generic loess smoothing function (blue)."}
+```{r wr_all, fig.env="figure*", fig.show="hold", fig.pos = "th", fig.cap="Reaction times (left) and accuracies (right) for two-alternative forced-choice word recognition paradigms. Each circle shows an experiment, with areas scaled by the number of participants. A generic loess smoothing function is shown in blue. For reaction times, dotted line shows adult reaction time and dashed line shows best-fitting Kail function. For accuracy, dotted line shows chance, and dashed lines show best-fitting half-logit function."}
 # should be using $1/n$ as the weighting term on the error, like a weighted least-squares, but we're not weighting right now because it broke the half-logit in accuracy
 # fig.env="figure*", fig.align="center",
+
+#```{r wr_acc, fig.pos = "t", fig.cap="Accuracies for word recognition paradigms. Circles show experiments, with colors indicating papers;  areas are scaled by the number of participants in each study.  (black) and loess (blue)."}
+
 
 d_wr <- read_csv("../data/word_recognition_MA.csv") %>%
     mutate(age_years = mean_age_1 / 365) 
@@ -290,9 +248,6 @@ ggplot(d_wr_kid, aes(x = age_years, y = x_1)) +
         legend.key.size = unit(.1, "in"), 
         legend.background = element_rect(fill="transparent", colour = NA)) + 
   theme(text = element_text(size = 9))
-```
-
-```{r wr_acc, fig.pos = "t", fig.cap="Accuracies for word recognition paradigms. Circles show experiments, with colors indicating papers;  areas are scaled by the number of participants in each study. Dotted line shows chance, and dashed lines show best-fitting half-logit function (black) and loess (blue)."}
 
 acc_wr_mod <- glm(accuracy ~ age_years, #weights = weight, 
                   family = binomial(psyphy::mafc.logit(2)),
@@ -309,34 +264,31 @@ ggplot(d_wr_kid, aes(x = age_years, y = accuracy)) +
   xlim(c(0,5)) + 
   xlab("Age (years)") + 
   ylab("Accuracy") + 
-  scale_colour_solarized(name=NULL) + 
+  scale_colour_solarized(guide=FALSE) + 
   scale_size_area(guide=FALSE) + 
-  guides(colour = guide_legend(nrow = 7)) +
   geom_smooth(span = 1, se=FALSE) + 
   theme_bw() + 
-  theme(legend.text=element_text(size=5), 
-        legend.position = c(0, .5), 
-        legend.justification=c(0,1),
-        legend.margin = unit(.02,"in"), 
-        legend.key = element_blank(), 
-        legend.margin = unit(0, "in"), 
-        legend.key.size = unit(.1, "in"), 
-        legend.background = element_rect(fill="transparent", colour = NA))+
   theme(text = element_text(size = 9))
 ```
 
 
-We conducted a systematic literature review by using Google Scholar to identify peer-reviewed papers citing @fernald1998. We screened this sample manually to find the subsample of `r length(unique(d_wr$short_cite))` papers that reported both accuracy and reaction time with sufficient detail to permit coding. 
+Consider a sequence of interacting mental processes. We assume that each of these has a Bernoulli success probability $s_p$. Thus, the probability of a sequence of failures is exponential such that $p_{success} = \prod_p s_p$. And each operation also takes some time to complete $t_p$, which we assume is distributed log-normally. Thus, the total time of the chain is $rt = \sum_p t_p$.^[Note that there is not a known parametric form for the sum of multiple lognormals. A variety of analytic approximations for these sums exist [@fenton1960], but they have some limitations, so instead we use numerical simulations here for simplicity.] Finally, consider that this operation is time-sensitive, and must be completed within a temporal threshold, also sampled from a log-normal distribution with mean $\theta$ and SD $\iota$.
 
-Figure \ref{fig:wr_rt} shows reaction times from this sample of papers, plotted by the mean age of the children in the reported studies. The dashed line shows an exponential function fit to these data (with $a = `r round(adult_wr_rt, digits =2)`$, $b = `r round(wr_opt$par[1], digits=2)`$, and $c = `r round(wr_opt$par[2], digits=2)`$). The intercept $a$ is estimated as the mean reaction time for adults in control experiments.^[Note that @kail1991's original analysis was of the slope of mental rotation speeds, so the exponential curve described a multiplier on the adult slope. This analysis is simpler, fitting a curve to the mean RTs directly.] Accuracies can be estimated similarly. We fit a logistic regression to accuracy data, using a half-logit linking function ($.5 + .5 \times \frac{1}{1 + e^-x}$) to bound accuracy between .5 and 1. Figure \ref{fig:wr_acc} shows the results of this analysis, with estimated parameters $\alpha = `r round(coef(acc_wr_mod)[1], digits =2)`$ and $\beta = `r round(coef(acc_wr_mod)[2], digits=2)`$. In both of these cases we see a qualitatively strong fit between the developmental model we assumed and the particulars of the experimental data (e.g., as estimated by a non-parametric model, shown in blue). 
+We can now approximate the probability that a chain is successful within a particular threshold. A representative set of simulations are shown in Figure \ref{fig:chain_sims}. For these and many other parameter settings, long chains of operations are unlikely to succeed unless individual operations are very fast and very accurate.^[All code and data for the simulations reported here is available at [http://github.com/mcfrank/sop](http://github.com/mcfrank/sop).]
 
-## Gaze following
+## Development within the model
 
-For our analysis of gaze-following, we identified papers *ADD DETAILS*. As a first division of the data we identified papers that used gaze alone, or combined gaze with pointing. We focused on papers with a simple two-alternative forced choice, as integrating across different numbers of alternatives added additional complexity to our model. We experimented with using a half-logit link function here, but found that many studies reported accuracies below .5 due to children's failure to disengage from the experiemnter's face; thus, we used a standard logistic model.  
+The two posited capacities in our model are speed and accuracy (probability of a successful operation). Both of these should change across development for any constituent cognitive operation, leading to dramatic changes in the cumulative speed and accuracy of chains of operations across development. To estimate these changes, we use parametric models of developmental change.
 
-In our first iteration of this analysis, we found that very few studies reported reaction times for gaze following, and those that did had no data from children older than 15 months and no data from pointing. Estimating developmental curves for these data was difficult; to remedy this issue we included new analyses of data from @yurovsky2013 and @yurovsky2015. Both of these paradigms were word learning experiments in which a social cue (either brief or extended) was used to mark a particular referent. Data from these studies can thus be used to estimate social cue following time, and both studies included large numbers of participants at older age ranges, constraining our analysis. *ADD ADULT RT ESTIMATE* 
+Pioneering work by @kail1991 describes the developmental trajectory of reaction times for complex tasks, via aggregation across the published literature. Empirically, the slope of these reaction times follows an exponential, such that $Y(i) = a + b e^{-ci}$, where Y is the predicted variable, $a$ is the eventual (adult) asymptote, $b$ is the multiplier for the (infant) intercept, $c$ is the rate of development, and $i$ is age. The @kail1991 model is a model of RT multipliers. Since operations are additive, these multipliers should apply to individual operations or to chains of operations equivalently: if the multiplier is constant then it can be factored out. 
 
-```{r gf_rt, fig.pos = "t", fig.cap="Reaction times for gaze following. Plotting conventions are as above. Results for pointing are shown with a black border."}
+Next we turn to accuracy. For simplicity, we consider the probability of success on a single operation changing across time as a simple logistic function where $Y(i) = \frac{1}{1 + e^{\alpha + \beta i}}$. $\alpha$ sets the intercept and $\beta$ marks the developmental multiplier, as in a standard logistic regression. 
+
+## Preliminary simulations
+
+We can combine these functions with the basic operation chain simulations defined above and examine the probability of a successful chain of operations across ages. Results for one parameter set are shown in Figure \ref{fig:devo_sims}. These simulations show that sharp develomental transitions from failure to success can be the product of relatively broad underlying functions. But the difficulty is constraining the model's predictions requires substantial information about speed and accuracy. In the next section we turn to the estimation of these parameters via meta-analysis. 
+
+```{r gf_all, fig.env="figure*", fig.pos = "th", fig.show="hold", fig.cap="Reaction times (left) and accuracies (right) for social cue following. Plotting conventions are as above. Results for gaze following alone are shown with no border; results for gaze plus pointing are shown with a black border. Dashed and solid lines show fits for gaze and gaze plus pointing, respectively."}
 
 d_gf <- readr::read_csv("../data/gaze_following_MA.csv") %>%
   mutate(age_years = mean_age_1/365, 
@@ -397,9 +349,7 @@ ggplot(filter(d_gf, plot_cite!="Adult Intercept"),
         legend.key.size = unit(.1, "in"), 
         legend.background = element_rect(fill="transparent", colour = NA)) + 
   theme(text = element_text(size = 9))
-```
 
-```{r gf_acc, fig.pos = "t", fig.cap="Accuracies for social cue following. Plotting conventions are as above."}
 acc_gf_mod <- glm(x_1 ~ age_years * pointing, #weights = 1/n_1, 
                   family = "binomial",
                   data = d_gf)
@@ -418,33 +368,36 @@ ggplot(filter(d_gf, plot_cite!="Adult Intercept"),
   xlim(c(0,5)) + 
   xlab("Age (years)") + 
   ylab("Accuracy") + 
-  scale_fill_solarized(name=NULL) + 
+  scale_fill_solarized(guide=FALSE) + 
   scale_size_area(guide=FALSE) + 
   scale_shape(guide=FALSE) + 
   scale_colour_manual(values = c(NA,"black"), guide=FALSE) + 
   scale_linetype_manual(values = c(2,1), guide=FALSE) +
-  guides(fill = guide_legend(ncol=1), guide=FALSE) + 
   theme_bw() +
-  theme(legend.text=element_text(size=5), 
-        legend.position = c(.4, .8), 
-        legend.justification=c(0,1),
-        legend.margin = unit(.02,"in"), 
-        legend.key = element_blank(), 
-        legend.margin = unit(0, "in"), 
-        legend.key.size = unit(.1, "in"), 
-        legend.background = element_rect(fill="transparent", colour = NA)) +
   theme(text = element_text(size = 9))
-
-
 ```
 
-Figures \ref{fig:gf_rt} and \ref{fig:gf_acc} show reaction time and accuracies for gaze following, both with and without pointing. Details are identical except that we use a standard logit function (rather than a half-logit) here, because social cue following tasks use a variety of different response scoring systems. Again we see relatively good qualitative fit by the developmental models.
+# Case Study: Early Word Learning
 
-## Estimating the speed of reference
+Why do children begin to show evidence of word learning around their first birthday? Although many accounts have been proposed [e.g. @tomasello1995's "nine-month revolution"], our null-model framework provides a simple explanation. Children may be trying to learn words from very early in development, but the basic cognitive components may be too slow and too challenging to allow for consistent learning (and consistent measurement of that learning by psychologists). The recent literature on early word learning gives some support for this contention, as careful measurement has revealed some aspects of receptive language prior to the first birthday [@bergelson2012].
 
-We next estimate plausible values for $\theta$ and $\iota$, which control the distribution of temporal thresholds at which refential utterances must be processed. To approximate them, we use a corpus of infant- and child-directed speech to estimate the lag between referential utterances. While many possible analyses of this issue are possible, here our assumption is simply that in order to learn from a particular utterance and social cue, it must be processed before the next cue and utterance are produced. 
+We focus here on learning a word that is presented ostensively via a social cue like gaze or pointing. For simplicity, we decompose the task of social word learning into two abilities: 1) social cue following, and 2) word recognition. This task analysis is an approximation: pointing is not the same as gaze following (and neither is always necessary), and recognition is not the same as learning and retention. But it nevertheless captures some aspects of the task---following a social cue to a distal target and processing some language associated with that target. And it has the major benefit for our purposes of providing data on development, since each of these tasks is well-studied.
 
-To estimae this timing, we turn to the Fernald and Morikawa corpus [@fernald1993;@frank2013], which contains a set of transcribed interactions between caregivers and children as they play with pairs of objects. Critically, this corpus contains approximate timing information [@rohde2014] as well as annotations for social cues used by the caregivers (e.g., gaze, pointing, etc.) to indicate which toy is being talked about. The primary variable of interest for our analysis was the distribution of time intervals between utterances using social cues to refer to objects. Preliminary analyses indicated that there were no differences in timing between referential utterances (those containing a concrete reference to an object in the current context) and non-referntial utterances, so we simply examined the distribution of inter-utterance times for all utterances. 
+## Word recognition
+
+We first attempt to estimate developmental changes in the speed of processing for word recognition. Seminal work by @fernald1998 used eye-movements to measure children's accuracy and reaction time across development. Subsequent investigations have identified many factors involved in speed of word recognition (e.g., the frequency and familiarity of the target word). Nevertheless, such research generally attempts to select simple, easy words that should be accessible to most children, so we can use this literature to derive rough estimates of accuracy and reaction time across development. 
+
+We conducted a systematic literature review by using Google Scholar to identify peer-reviewed papers citing @fernald1998. We screened this sample manually to find the subsample of `r length(unique(d_wr$short_cite))` papers that reported both accuracy and reaction time with sufficient detail to permit coding. Figure \ref{fig:wr_all} shows reaction times from this sample of papers, plotted by the mean age of the children in the reported studies. The dashed line shows an exponential function fit to these data (with $a = `r round(adult_wr_rt, digits =2)`$, $b = `r round(wr_opt$par[1], digits=2)`$, and $c = `r round(wr_opt$par[2], digits=2)`$). The intercept $a$ is estimated as the mean reaction time for adults in control experiments.^[Note that @kail1991's original analysis was of the slope of mental rotation speeds, so the exponential curve described a multiplier on the adult slope. This analysis is simpler, fitting a curve to the mean RTs directly.] 
+
+Accuracies can be estimated similarly. We fit a logistic regression to accuracy data, using a half-logit linking function ($.5 + .5 \times \frac{1}{1 + e^-x}$) to bound accuracy between .5 and 1. Figure \ref{fig:wr_all} shows the results of this analysis, with estimated parameters $\alpha = `r round(coef(acc_wr_mod)[1], digits =2)`$ and $\beta = `r round(coef(acc_wr_mod)[2], digits=2)`$. In both of these cases we see a qualitatively strong fit between the developmental model we assumed and the particulars of the experimental data (e.g., as estimated by a naive smoothing model, shown in blue). 
+
+## Social cue following
+
+For our analysis of gaze-following, we identified papers citing @scaife1975. As a first division of the data we identified papers that used gaze alone, or combined gaze with pointing. We focused on papers with a simple two-alternative forced choice, as integrating across different numbers of alternatives added additional complexity to our model. We experimented with using a half-logit link function here, but found that many studies reported accuracies below .5 due to children's failure to disengage from the experiemnter's face; thus, we used a standard logistic model.  
+
+In our first iteration of this analysis, we found that very few studies reported reaction times for gaze following, and those that did had no data from children older than 15 months and no data from pointing. Estimating developmental curves for these data was difficult; to remedy this issue we included new analyses of data from @yurovsky2013 and @yurovsky2015. Both of these paradigms were word learning experiments in which a social cue (either brief or extended) was used to mark a particular referent. Data from these studies can thus be used to estimate social cue following time, and both studies included large numbers of participants at older age ranges, constraining our analysis. We also added 440ms as a floor adult reaction time, on the basis of measurements by @driver1999.
+
+Figures \ref{fig:gf_all} shows reaction time and accuracies for gaze following, both with and without pointing. Details are identical except that we use a standard logit function (rather than a half-logit) here, because social cue following tasks use a variety of different response scoring systems. Again we see relatively good qualitative fit by the developmental models.
 
 
 ```{r theta, fig.pos = "t", fig.height = 2, fig.cap = "Histograms of inter-utterance intervals in child-directed speech. Panels show data from 6-, 12-, and 18-month-olds. Blue curves show the best-fitting log normal distribution for the full dataset."}
@@ -514,7 +467,11 @@ ggplot(filter(fm, dt >= 0),
   theme(text = element_text(size = 9))
 ```
 
-Figure \ref{fig:theta} shows the empirical distribution across ages, along with the best-fitting log-normal distribution. The mean time between utterances was `r round(mean(fm$dt), digits=2)` and the median was `r median(fm$dt)`. Perhaps surprisingly, there were no major differences in the distribution between age groups 
+## Estimating a temporal threshold
+
+We next estimate plausible values for $\theta$ and $\iota$, which control the distribution of temporal thresholds at which refential utterances must be processed. To estimae this timing, we turned to the Fernald and Morikawa corpus [@frank2013], which contains a set of transcribed interactions between caregivers and children as they play with pairs of objects. Critically, this corpus contains approximate timing information [@rohde2014] as well as annotations for social cues used by the caregivers (e.g., gaze, pointing, etc.) to indicate which toy is being talked about. 
+
+The primary variable of interest for our analysis was the distribution of time intervals between utterances using social cues to refer to objects. Preliminary analyses indicated that there were no differences in timing between referential utterances (those containing a concrete reference to an object in the current context) and non-referential utterances, so we  examined the full distribution of inter-utterance intervals. Figure \ref{fig:theta} shows the empirical distribution across ages, along with the best-fitting log-normal distribution. The mean time between utterances was `r round(mean(fm$dt), digits=2)` and the median was `r median(fm$dt)`. Perhaps surprisingly, there were no major differences in the distribution between age groups 
 (for example, 
 $\text{median}_{6} = `r round(median(fm$dt[fm$age_group==6]), digits = 2)`$,
 $\text{median}_{12} = `r round(median(fm$dt[fm$age_group==12]), digits = 2)`$,
@@ -523,7 +480,7 @@ suggesting that parents were not substantially adjusting the pace of conversatio
 
 # Simulations
 
-```{r full_sim, fig.pos = "t", fig.height = 2.5, fig.cap="Simulation results using meta-analytic parameters."}
+```{r full_sim, fig.pos = "t", fig.height = 2.5, fig.cap="Simulation results using meta-analytic parameters estimated for speed and accuracy in social cue following and word recognition."}
 n.sims <- 1000
 ages <- seq(0, 5, .1)
 cues <- c("gaze","pointing")
@@ -575,14 +532,19 @@ ggplot(ms, aes(x = age, y = p, col = cue)) +
   geom_label_repel(data = filter(ms, age == 2.5), 
                    aes(label=cue), label.padding=unit(.05,"in")) + 
   # geom_dl(aes(label = cue), method = "top.qp") + 
-  ylab("Probability of successful ostensive learning") + 
+  ylab("Probability of success") + 
   xlab("Age (months)") + 
   ylim(c(0,.6)) + 
   theme_bw() + 
   theme(text = element_text(size = 9))
 ```
 
-We now run the same developmental simulations described above, but using the estimated numerical parameters for word processing, social cue following, and the timing of utterances in child-directed speech. Figure \ref{fig:full_sim} shows the probability of successful ostensive learning by age, split by social cue. Pointing is substantially more effective than gaze following, but under this naive model, neither cue ever leads to success more than half of the time. While low accuracy constrains performance early in development, accuracy is above 80\% by age 3 and reaction time is the bounding factor.\footnote{One consequential decision for the model is the assumed response function for social cues. Here we have used a half-logit link function, assuming that half of the time, the child will be looking at the correct object anyway. Without this assumption, learning probabilities for early infancy go down essentially to zero.}
+We now run the same developmental simulations described above, but using the estimated numerical parameters for word processing, social cue following, and the timing of utterances in child-directed speech. Figure \ref{fig:full_sim} shows the probability of successful ostensive learning by age, split by social cue. Pointing is substantially more effective than gaze following, but under this naive model, neither cue ever leads to success more than half of the time. While low accuracy constrains performance early in development, accuracy is above 80\% by age 3 and reaction time is the bounding factor.\footnote{One consequential decision for the model is the assumed response function for social cues. Here we have used a half-logit link function for accuracy, assuming a two-alternative forced choice between referents. Without this assumption, learning probabilities for early infancy go down essentially to zero, but the asymptote remains unchanged.}
+
+A second way of viewing these same simulations is shown in Figure \ref{fig:instances}, which shows the average number of learning instances a learner would need to achieve a single successful mapping trial under this model. This number declines from more than 10 in early infancy to an asymptote of approximately two. Here the difference between gaze and pointing is more apparent, especially earlier in development. This difference is congruent with the difficulties in word learning from gaze observed by @yurovsky2013.
+
+Is it reasonable to assume that not all word mapping opportunities succeed? After all, 3--4-year-old children have been show to learn words from a single exposure [@carey1978]. We would argue that a success rate of approximately one half at age three is actually very congruent with accuracies in the 60-80\% rate shown by @markson1997 and others (given a handful of exposures during training). And rates of learning for younger children also show some numerical congruence (e.g., @woodward1994 showed some evidence of learning from nine exposures in 13- and 18-month-olds). In sum, even though average results suggest that some children may learn from a small set of exposures, they do not imply that *all* children have learned. 
+
 
 ```{r instances, fig.pos = "t", fig.height=2.5, fig.cap = "Average number of learning instances needed per effective learning instance, plotted by age."}
 
@@ -599,17 +561,14 @@ ggplot(ms, aes(x = age, y = 1/p, col = cue)) +
   theme(text = element_text(size = 9))
 ```
 
-A second way of viewing these same simulations is given in Figure \ref{fig:instances}, which shows the average number of learning instances a learner would need to achieve a single successful mapping trial under this model. This number declines from more than 10 in early infancy to an asymptote of approximately two. Here the difference between gaze and pointing is more apparent, especially earlier in development. This difference is congruent with the difficulties in word learning from gaze observed by @yurovsky2013 (one of the papers whose cue-following measurements we used above).
-
-Is it reasonable to assume that not all word mapping opportunities succeed? After all, 3--4-year-old children have been show to learn words from a single exposure [@carey1978]. We would argue that a success rate of approximately one half at age three is actually very congruent with accuracies in the 60-80\% rate shown by @markson1997 and others (given a handful of exposures during training). And rates of learning for younger children also show some numerical congruence (e.g., @woodward1994 showed some evidence of learning from nine exposures in 13- and 18-month-olds). In sum, even though average results suggest that some children may learn from a small set of exposures, they do not imply that *all* children have learned. 
 
 #  Discussion
 
-We presented a model of children's developing processing capabilities in which the sole age-related changes are in the speed and accuracy of mental operations. This strong null model of development is a first step towards a baseline for cognitive development, attempting to answer the question of what changes we would see even if there were *no* substantive changes in children's internal representations. When we fit the model to early word learning, using data from word recognition and social cue following paradigms, we found evidence of developmental change and _prima facie_ congruence with some previous experimental work. 
+We presented a model of children's developing processing capabilities in which the sole age-related changes are in the speed and accuracy of mental operations. This strong null model is a first step towards a baseline for cognitive development, attempting to answer the question of what changes we would see even if there were *no* substantive differences in children's internal representations across ages. When we fit the model to early word learning, using data from word recognition and social cue following paradigms, we found evidence of developmental change and _prima facie_ congruence with some previous experimental work. 
 
-The simple model we described here has many apparent limitations. First, we estimated parameters from the data that were available rather than the data we would have liked to have (e.g., reaction times from familiar word recognition rather than from novel word learning). Second, we assumed a purely serial model of responding in which accuracy and reaction time were independent from one another; more sophisticated models of decision-making might link processes in a race model or yoke accuracy and reaction-time in a speed-accuracy tradeoff. Third, although we did not find evidence of large changes in the pace of utteances across development, parents likely still adapt to their children's speed of processing in some instances, leading to better outcomes for those optimal learning instances. 
+The simple model we described here has many limitations. First, we estimated parameters from the data that were available rather than the data we would have liked to have (e.g., reaction times from familiar word recognition rather than from novel word learning). Second, we assumed a purely serial model of responding in which accuracy and reaction time were independent from one another; more sophisticated models of decision-making might link processes in a race model or yoke accuracy and reaction-time in a speed-accuracy tradeoff. Third, although we did not find evidence of large changes in the pace of utterances across development, parents likely still adapt to their children's speed of processing in some instances, leading to better outcomes for those optimal learning instances. 
 
-Despite the many assumptions and limitations of this modeling exercise, we believe that the results still should be an important constraint on theorizing. Even if we discard the parametric form of the model and simply examine reaction times for gaze following, we see that they are generally longer than the interval between new utterances. This numerical observation suggests that even if the majority of our model is incorrect, it is still unlikely that children before their first birthday can learn words using gaze cues, even if in principle all the competence necessary is in place. 
+Despite the many assumptions and limitations of this modeling exercise, we believe that the results still should be an important constraint on theorizing. Even if we discard the parametric form of the model and simply examine the meta-analytic reaction times we estimated, we see that they are generally longer than the interval between new utterances, suggesting that word learning through gaze is likely difficult in the first year. This qualitative numerical observation suggests that even if the particular paramtric form of our model is incorrect, the basic intuition may be useful. More generally, the null model we articulated here should reinforce the point that---even with the most sensitive measurements available---we should not infer a lack of competence from a failure in performance.
 
 # Acknowledgements
 
